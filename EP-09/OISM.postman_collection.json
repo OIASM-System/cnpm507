@@ -1,0 +1,273 @@
+{
+  "info": {
+    "name": "OISM API — Draft",
+    "description": "Draft Postman collection for OISM. Set baseUrl and accessToken in an environment. Paths and DTOs are proposed and must be aligned with the approved API implementation. / Bộ sưu tập nháp; cần đồng bộ với API đã duyệt.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost:5001/api/v1"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "branchId",
+      "value": "br_123"
+    },
+    {
+      "key": "productId",
+      "value": "prd_123"
+    },
+    {
+      "key": "orderId",
+      "value": "ord_123"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"userNameOrEmail\":\"user@example.test\",\"password\":\"<replace-me>\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/products?page=1&pageSize=20"
+          }
+        },
+        {
+          "name": "Create product (proposed)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"sku\":\"SKU-001\",\"name\":\"Sample product\",\"unitPrice\":100000}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/products"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Get stock",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/inventory/stock?branchId={{branchId}}"
+          }
+        },
+        {
+          "name": "Get append-only ledger",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/inventory/ledger?branchId={{branchId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "List orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/orders?page=1"
+          }
+        },
+        {
+          "name": "Create order (proposed)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{$guid}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"channel\":\"POS\",\"branchId\":\"{{branchId}}\",\"items\":[{\"sku\":\"SKU-001\",\"quantity\":1}]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/orders"
+          }
+        }
+      ]
+    },
+    {
+      "name": "POS",
+      "item": [
+        {
+          "name": "Lookup barcode",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/pos/products/lookup?barcode=SKU-001&branchId={{branchId}}"
+          }
+        },
+        {
+          "name": "Checkout (proposed)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{$guid}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"branchId\":\"{{branchId}}\",\"items\":[{\"sku\":\"SKU-001\",\"quantity\":1}],\"payment\":{\"method\":\"Cash\",\"amountTendered\":100000}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/pos/checkouts"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports & Webhooks",
+      "item": [
+        {
+          "name": "Sales report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/reports/sales?from=2026-10-01T00:00:00Z&to=2026-10-31T23:59:59Z"
+          }
+        },
+        {
+          "name": "Simulate webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"provider\":\"DemoMarketplace\",\"eventType\":\"order.created\",\"eventId\":\"evt_demo_001\",\"payload\":{\"externalOrderId\":\"EXT-1001\",\"items\":[{\"sku\":\"SKU-001\",\"quantity\":1}]}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/webhooks/simulator/events"
+          }
+        }
+      ]
+    }
+  ]
+}

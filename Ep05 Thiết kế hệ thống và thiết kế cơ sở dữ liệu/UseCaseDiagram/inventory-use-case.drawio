@@ -1,0 +1,69 @@
+<mxfile host="Electron">
+  <diagram name="Trang-1" id="X1KNy0I7i0l7f04QhGdW">
+    <mxGraphModel dx="1414" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="boundary" parent="1" style="shape=rect;whiteSpace=wrap;html=1;fillColor=#60A5FA;strokeColor=#1E40AF;strokeWidth=2;verticalAlign=top;align=center;fontStyle=1;fontSize=14;fontColor=#FFFFFF;spacingTop=10;" value="Inventory Ledger &amp; Stock Management Subsystem" vertex="1">
+          <mxGeometry height="620" width="580" x="180" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_wh_staff" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Warehouse Staff" vertex="1">
+          <mxGeometry height="80" width="40" x="50" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_manager" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Store Manager" vertex="1">
+          <mxGeometry height="80" width="40" x="810" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_goods_receipt" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontStyle=1;fontSize=11;" value="UC-INV-01: Create Goods Import Receipt" vertex="1">
+          <mxGeometry height="50" width="250" x="240" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_cogs" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="UC-COST-01: Calculate Weighted Average Cost" vertex="1">
+          <mxGeometry height="50" width="230" x="510" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_transfer" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="UC-INV-02: Process Warehouse Transfer" vertex="1">
+          <mxGeometry height="50" width="240" x="240" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_stocktake" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="UC-INV-03: Perform Physical Stocktake" vertex="1">
+          <mxGeometry height="50" width="240" x="240" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_ledger" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontStyle=1;fontSize=11;" value="UC-INV-04: View Append-Only Inventory Ledger" vertex="1">
+          <mxGeometry height="50" width="270" x="240" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_adjust" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Generate Adjustment Ledger Entries" vertex="1">
+          <mxGeometry height="40" width="220" x="500" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_wh1" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_goods_receipt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_wh2" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_transfer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_wh3" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_stocktake">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_wh4" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_ledger">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_inc1" edge="1" parent="1" source="uc_goods_receipt" style="endArrow=open;endSize=8;dashed=1;strokeColor=#000000;fontSize=10;" target="uc_cogs" value="«include»">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_inc2" edge="1" parent="1" source="uc_stocktake" style="endArrow=open;endSize=8;dashed=1;strokeColor=#000000;fontSize=10;" target="uc_adjust" value="«include»">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_m1" edge="1" parent="1" source="actor_manager" style="endArrow=none;strokeColor=#000000;" target="uc_goods_receipt">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="610" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_m2" edge="1" parent="1" source="actor_manager" style="endArrow=none;strokeColor=#000000;" target="uc_ledger">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="420" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

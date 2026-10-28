@@ -1,0 +1,52 @@
+<mxfile host="Electron">
+  <diagram name="Trang-1" id="RfUXqmMuqN1LkDXotj_0">
+    <mxGraphModel dx="1414" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="boundary" parent="1" style="shape=rect;whiteSpace=wrap;html=1;fillColor=#60A5FA;strokeColor=#1E40AF;strokeWidth=2;verticalAlign=top;align=center;fontStyle=1;fontSize=14;fontColor=#FFFFFF;spacingTop=10;" value="Progressive Web App POS Subsystem" vertex="1">
+          <mxGeometry height="580" width="540" x="180" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_cashier" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Cashier / POS Staff" vertex="1">
+          <mxGeometry height="80" width="40" x="50" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_scan" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="UC-POS-01: Scan Barcode / Search SKU" vertex="1">
+          <mxGeometry height="50" width="240" x="240" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_check_stock" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="UC-POS-02: Check Available Stock Bound" vertex="1">
+          <mxGeometry height="50" width="250" x="240" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_checkout" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontStyle=1;fontSize=11;" value="UC-POS-04: Atomic POS Quick Checkout" vertex="1">
+          <mxGeometry height="50" width="250" x="240" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_payment" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="UC-POS-03: Process Cash / QR Payment" vertex="1">
+          <mxGeometry height="50" width="240" x="240" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_print" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Print Receipt via Browser API" vertex="1">
+          <mxGeometry height="50" width="230" x="240" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_c1" edge="1" parent="1" source="actor_cashier" style="endArrow=none;strokeColor=#000000;" target="uc_scan">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_c2" edge="1" parent="1" source="actor_cashier" style="endArrow=none;strokeColor=#000000;" target="uc_check_stock">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_c3" edge="1" parent="1" source="actor_cashier" style="endArrow=none;strokeColor=#000000;" target="uc_checkout">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_c4" edge="1" parent="1" source="actor_cashier" style="endArrow=none;strokeColor=#000000;" target="uc_payment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_c5" edge="1" parent="1" source="actor_cashier" style="endArrow=none;strokeColor=#000000;" target="uc_print">
+          <mxGeometry relative="1" x="0.0251" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="370" />
+              <mxPoint x="200" y="430" />
+            </Array>
+            <mxPoint x="90" y="310" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

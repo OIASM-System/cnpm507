@@ -1,0 +1,52 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Trang-1" id="i-xpBf0x8ARpBBFWsJpr">
+    <mxGraphModel dx="1030" dy="562" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="boundary" parent="1" style="shape=rect;whiteSpace=wrap;html=1;fillColor=#60A5FA;strokeColor=#1E40AF;strokeWidth=2;verticalAlign=top;align=center;fontStyle=1;fontSize=14;fontColor=#FFFFFF;spacingTop=10;" value="Product Catalog Subsystem" vertex="1">
+          <mxGeometry height="580" width="540" x="180" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_wh_staff" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Warehouse Staff" vertex="1">
+          <mxGeometry height="80" width="40" x="50" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_admin" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Store Owner / Admin" vertex="1">
+          <mxGeometry height="80" width="40" x="50" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_category" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="UC-PROD-01: Manage Categories &amp; Brands" vertex="1">
+          <mxGeometry height="50" width="250" x="240" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_product" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontStyle=1;fontSize=11;" value="UC-PROD-02: Manage Products &amp; Variants" vertex="1">
+          <mxGeometry height="50" width="250" x="240" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sku" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="UC-PROD-02-SKU: Manage SKU Attributes" vertex="1">
+          <mxGeometry height="40" width="210" x="480" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_barcode" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="UC-PROD-03: Generate / Import Barcodes" vertex="1">
+          <mxGeometry height="50" width="240" x="240" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_price" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="UC-PROD-04: Manage Retail &amp; Wholesale Prices" vertex="1">
+          <mxGeometry height="50" width="260" x="240" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_wh1" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_category">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_wh2" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_product">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_wh3" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_barcode">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_inc1" edge="1" parent="1" source="uc_product" style="endArrow=open;endSize=8;dashed=1;strokeColor=#000000;fontSize=10;" target="uc_sku" value="«include»">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ad1" edge="1" parent="1" source="actor_admin" style="endArrow=none;strokeColor=#000000;" target="uc_product">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ad2" edge="1" parent="1" source="actor_admin" style="endArrow=none;strokeColor=#000000;" target="uc_price">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

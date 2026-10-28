@@ -1,0 +1,254 @@
+<mxfile host="Electron">
+  <diagram name="Trang-1" id="3FV1KGgv9aMS5elOzeGA">
+    <mxGraphModel dx="2531" dy="1013" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="boundary" parent="1" style="shape=rect;whiteSpace=wrap;html=1;fillColor=#60A5FA;strokeColor=#1E40AF;strokeWidth=2;verticalAlign=top;align=center;fontStyle=1;fontSize=16;fontColor=#FFFFFF;spacingTop=10;" value="Omnichannel Inventory and Sales Management System" vertex="1">
+          <mxGeometry height="1520" width="840" x="180" x2="0" y="80" y2="0" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_account" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Account" vertex="1">
+          <mxGeometry height="80" width="40" x="50" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_cashier" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Cashier / POS Staff" vertex="1">
+          <mxGeometry height="80" width="40" x="50" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_wh_staff" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Warehouse Staff" vertex="1">
+          <mxGeometry height="80" width="40" x="50" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_admin" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Store Owner / Admin" vertex="1">
+          <mxGeometry height="80" width="40" x="50" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_manager" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Store Manager" vertex="1">
+          <mxGeometry height="80" width="40" x="1110" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_ecommerce" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="E-Com Platform / Simulator" vertex="1">
+          <mxGeometry height="80" width="40" x="1110" y="1080" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_login" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontStyle=1;fontSize=11;" value="Login / Logout" vertex="1">
+          <mxGeometry height="40" width="180" x="400" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_profile" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="View Profile / Change Password" vertex="1">
+          <mxGeometry height="40" width="180" x="240" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_reg_tenant" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Register Tenant Space" vertex="1">
+          <mxGeometry height="40" width="180" x="580" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_pos_sale" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Create POS Checkout Order" vertex="1">
+          <mxGeometry height="40" width="200" x="360" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_scan_barcode" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Scan Barcode / Search SKU" vertex="1">
+          <mxGeometry height="40" width="190" x="250" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_process_pay" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Process Payment (Cash / QR)" vertex="1">
+          <mxGeometry height="40" width="200" x="380" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_print_receipt" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Print Receipt via Browser API" vertex="1">
+          <mxGeometry height="40" width="190" x="520" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_check_pos_stock" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Check Real-time Stock at POS" vertex="1">
+          <mxGeometry height="40" width="210" x="280" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_goods_receipt" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Create Goods Import Receipt" vertex="1">
+          <mxGeometry height="40" width="210" x="380" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_auto_cogs" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Calculate Weighted Average Cost" vertex="1">
+          <mxGeometry height="40" width="220" x="640" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_stock_transfer" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Process Warehouse Transfer" vertex="1">
+          <mxGeometry height="40" width="200" x="320" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_stocktake" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Perform Physical Stocktake" vertex="1">
+          <mxGeometry height="40" width="200" x="300" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_view_ledger" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="View Append-Only Inventory Ledger" vertex="1">
+          <mxGeometry height="40" width="240" x="340" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_manage_product" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Manage Products &amp; Variants (SKU)" vertex="1">
+          <mxGeometry height="40" width="230" x="320" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_manage_barcode" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Generate / Import Barcodes" vertex="1">
+          <mxGeometry height="40" width="200" x="300" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_manage_price" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Manage Retail / Wholesale Prices" vertex="1">
+          <mxGeometry height="40" width="230" x="340" y="890" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_manage_category" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Manage Categories &amp; Brands" vertex="1">
+          <mxGeometry height="40" width="210" x="360" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_ingest_order" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Ingest Multi-Channel Orders" vertex="1">
+          <mxGeometry height="40" width="210" x="580" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_reserve_stock" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Execute Anti-Oversell Stock Reserve" vertex="1">
+          <mxGeometry height="40" width="240" x="400" y="1080" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_process_order" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Approve / Process Online Order" vertex="1">
+          <mxGeometry height="40" width="220" x="620" y="1130" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sim_webhook" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Simulate E-Com Webhook Payload" vertex="1">
+          <mxGeometry height="40" width="230" x="600" y="1190" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_manage_users" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Manage Users &amp; RBAC Roles" vertex="1">
+          <mxGeometry height="40" width="210" x="260" y="1270" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_manage_branch" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="Manage Stores &amp; Branches" vertex="1">
+          <mxGeometry height="40" width="200" x="250" y="1330" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_view_reports" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="View Revenue &amp; Gross Profit Report" vertex="1">
+          <mxGeometry height="40" width="240" x="500" y="1380" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_ai_reorder" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" value="View AI Low-Stock &amp; Reorder Alerts" vertex="1">
+          <mxGeometry height="40" width="240" x="480" y="1440" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_gen1" edge="1" parent="1" source="actor_cashier" style="endArrow=block;endSize=10;endFill=0;strokeColor=#000000;" target="actor_account">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_gen2" edge="1" parent="1" source="actor_wh_staff" style="endArrow=block;endSize=10;endFill=0;strokeColor=#000000;" target="actor_account">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-110" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_gen3" edge="1" parent="1" source="actor_admin" style="endArrow=block;endSize=10;endFill=0;strokeColor=#000000;" target="actor_account">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-280" y="490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_acc1" edge="1" parent="1" source="actor_account" style="endArrow=none;strokeColor=#000000;" target="uc_login">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_acc2" edge="1" parent="1" source="actor_account" style="endArrow=none;strokeColor=#000000;" target="uc_profile">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_cas1" edge="1" parent="1" source="actor_cashier" style="endArrow=none;strokeColor=#000000;" target="uc_pos_sale">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_cas2" edge="1" parent="1" source="actor_cashier" style="endArrow=none;strokeColor=#000000;" target="uc_scan_barcode">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_cas3" edge="1" parent="1" source="actor_cashier" style="endArrow=none;strokeColor=#000000;" target="uc_process_pay">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_cas4" edge="1" parent="1" source="actor_cashier" style="endArrow=none;strokeColor=#000000;" target="uc_print_receipt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_cas5" edge="1" parent="1" source="actor_cashier" style="endArrow=none;strokeColor=#000000;" target="uc_check_pos_stock">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_wh1" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_goods_receipt">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_wh2" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_stock_transfer">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="600" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_wh3" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_stocktake">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_wh4" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_view_ledger">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_wh5" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_manage_product">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_wh6" edge="1" parent="1" source="actor_wh_staff" style="endArrow=none;strokeColor=#000000;" target="uc_manage_barcode">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_adm1" edge="1" parent="1" source="actor_admin" style="endArrow=none;strokeColor=#000000;" target="uc_reg_tenant">
+          <mxGeometry relative="1" x="-0.049" as="geometry">
+            <Array as="points">
+              <mxPoint x="90" y="1620" />
+              <mxPoint x="1270" y="1620" />
+              <mxPoint x="1260" y="410" />
+              <mxPoint x="820" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_adm2" edge="1" parent="1" source="actor_admin" style="endArrow=none;strokeColor=#000000;" target="uc_manage_users">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_adm3" edge="1" parent="1" source="actor_admin" style="endArrow=none;strokeColor=#000000;" target="uc_manage_branch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_adm4" edge="1" parent="1" source="actor_admin" style="endArrow=none;strokeColor=#000000;" target="uc_manage_price">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_adm5" edge="1" parent="1" source="actor_admin" style="endArrow=none;strokeColor=#000000;" target="uc_manage_category">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_adm6" edge="1" parent="1" source="actor_admin" style="endArrow=none;strokeColor=#000000;" target="uc_view_reports">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="1380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_adm7" edge="1" parent="1" source="actor_admin" style="endArrow=none;strokeColor=#000000;" target="uc_ai_reorder">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="1410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_mrg1" edge="1" parent="1" source="actor_manager" style="endArrow=none;strokeColor=#000000;" target="uc_process_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_mrg2" edge="1" parent="1" source="actor_manager" style="endArrow=none;strokeColor=#000000;" target="uc_view_reports">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="870" y="1280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_mrg3" edge="1" parent="1" source="actor_manager" style="endArrow=none;strokeColor=#000000;" target="uc_ai_reorder">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="1320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_mrg4" edge="1" parent="1" source="actor_manager" style="endArrow=none;strokeColor=#000000;" target="uc_goods_receipt">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="870" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_ecom1" edge="1" parent="1" source="actor_ecommerce" style="endArrow=none;strokeColor=#000000;" target="uc_ingest_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ecom2" edge="1" parent="1" source="actor_ecommerce" style="endArrow=none;strokeColor=#000000;" target="uc_sim_webhook">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_inc1" edge="1" parent="1" source="actor_wh_staff" style="endArrow=open;endSize=8;dashed=1;strokeColor=#000000;fontSize=10;" target="uc_auto_cogs" value="«include»">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_inc2" edge="1" parent="1" source="uc_ingest_order" style="endArrow=open;endSize=8;dashed=1;strokeColor=#000000;fontSize=10;" target="uc_reserve_stock" value="«include»">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,282 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Trang-1" id="R8cOxm5OHd9j1Q14e8dU">
+    <mxGraphModel dx="1714" dy="1017" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="system" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=15;fontStyle=1;align=center;" value="Omnichannel Inventory and&#xa;Sales Management System (OISM)" vertex="1">
+          <mxGeometry height="670" width="670" x="500" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="owner" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" value="Owner&#xa;Tenant owner - full access" vertex="1">
+          <mxGeometry height="150" width="160" x="40" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="staff" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" value="Staff&#xa;Inventory &amp; order management" vertex="1">
+          <mxGeometry height="360" width="160" x="50" y="414" as="geometry" />
+        </mxCell>
+        <mxCell id="ecommerce" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" value="E-commerce Platforms&#xa;Shopee / TikTok Shop / Lazada" vertex="1">
+          <mxGeometry height="80" width="180" x="1270" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cashier" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" value="Cashier&#xa;POS (PWA) web app" vertex="1">
+          <mxGeometry height="400" width="180" x="1390" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="developer" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" value="Developer / Tester&#xa;Webhook &amp; mobile user" vertex="1">
+          <mxGeometry height="80" width="180" x="1370" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="flow_o1" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="Tenant registration info">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="170" as="sourcePoint" />
+            <mxPoint x="550" y="215" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_o2" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="Login credentials">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="190" as="sourcePoint" />
+            <mxPoint x="570" y="235" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_o3" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="Branch &amp; warehouse info">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="210" as="sourcePoint" />
+            <mxPoint x="590" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_o4" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="User &amp; role assignment">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="230" as="sourcePoint" />
+            <mxPoint x="615" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_o5" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="Report / analytics">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="250" as="sourcePoint" />
+            <mxPoint x="640" y="325" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_o6" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Tenant ID &amp; registration result">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="660" y="355" as="sourcePoint" />
+            <mxPoint x="200" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_o7" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Auth token (JWT)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="625" y="380" as="sourcePoint" />
+            <mxPoint x="200" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_o8" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Branch &amp; warehouse list">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="405" as="sourcePoint" />
+            <mxPoint x="200" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_o9" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="User &amp; role list">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="555" y="430" as="sourcePoint" />
+            <mxPoint x="200" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_o10" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Revenue, COGS &amp; gross profit report">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="525" y="455" as="sourcePoint" />
+            <mxPoint x="200" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_o11" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Inventory value &amp; sales velocity report">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="505" y="480" as="sourcePoint" />
+            <mxPoint x="200" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s1" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="Login credentials">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="440" as="sourcePoint" />
+            <mxPoint x="505" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s2" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="Category, brand, product, SKU, barcode &amp; price info">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="465" as="sourcePoint" />
+            <mxPoint x="525" y="540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s3" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="Goods receipt info">
+          <mxGeometry relative="1" x="0.0893" as="geometry">
+            <Array as="points" />
+            <mxPoint x="200" y="490" as="sourcePoint" />
+            <mxPoint x="555" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s4" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="Stock transfer request">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="515" as="sourcePoint" />
+            <mxPoint x="590" y="575" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s5" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="Stocktake count data">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="540" as="sourcePoint" />
+            <mxPoint x="625" y="585" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s6" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="Manual order info">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="565" as="sourcePoint" />
+            <mxPoint x="660" y="595" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s7" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="Order processing decision">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="590" as="sourcePoint" />
+            <mxPoint x="690" y="605" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s8" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Auth token (JWT)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="610" as="sourcePoint" />
+            <mxPoint x="200" y="615" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s9" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Product &amp; SKU list">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="740" y="615" as="sourcePoint" />
+            <mxPoint x="200" y="635" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s10" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Inventory ledger &amp; balances">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="620" as="sourcePoint" />
+            <mxPoint x="200" y="655" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s11" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Goods receipt result &amp; updated COGS">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="740" y="625" as="sourcePoint" />
+            <mxPoint x="200" y="675" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s12" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Stock transfer status">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="630" as="sourcePoint" />
+            <mxPoint x="200" y="695" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s13" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Stocktake variance &amp; adjustments">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="690" y="635" as="sourcePoint" />
+            <mxPoint x="200" y="715" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s14" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Picking order list &amp; delivery note">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="660" y="640" as="sourcePoint" />
+            <mxPoint x="200" y="735" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s15" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="New order notification">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="625" y="645" as="sourcePoint" />
+            <mxPoint x="200" y="755" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_s16" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" value="Low stock alert">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="519" as="sourcePoint" />
+            <mxPoint x="210" y="774" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_e1" edge="1" parent="1" source="ecommerce" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" target="system" value="Online order webhook payload">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1190" y="240" as="sourcePoint" />
+            <mxPoint x="880" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_e2" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="ecommerce" value="Order accepted / rejected result">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="860" y="290" as="sourcePoint" />
+            <mxPoint x="1200" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_c1" edge="1" parent="1" source="cashier" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" target="system" value="Login credentials">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1200" y="360" as="sourcePoint" />
+            <mxPoint x="890" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_c2" edge="1" parent="1" source="cashier" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;exitX=0;exitY=0;exitDx=0;exitDy=0;" target="system" value="Product assert / barcode scan">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1270" y="180" />
+            </Array>
+            <mxPoint x="1200" y="385" as="sourcePoint" />
+            <mxPoint x="900" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_c3" edge="1" parent="1" source="cashier" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" target="system" value="POS sale items &amp; payment method">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1200" y="410" as="sourcePoint" />
+            <mxPoint x="900" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_c4" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="cashier" value="Auth token (JWT)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="900" y="440" as="sourcePoint" />
+            <mxPoint x="1200" y="435" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_c5" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;" target="cashier" value="Product info &amp; available stock">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="900" y="460" as="sourcePoint" />
+            <mxPoint x="1200" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_c6" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;entryX=0.011;entryY=0.862;entryDx=0;entryDy=0;entryPerimeter=0;" target="cashier" value="Insufficient stock rejection">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="900" y="480" as="sourcePoint" />
+            <mxPoint x="1200" y="485" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_c7" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="cashier" value="Payment QR code">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="890" y="500" as="sourcePoint" />
+            <mxPoint x="1200" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_c8" edge="1" parent="1" source="cashier" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="system" value="Payment result">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1200" y="530" as="sourcePoint" />
+            <mxPoint x="880" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_c9" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" target="cashier" value="Receipt data (browser print)">
+          <mxGeometry relative="1" x="-0.0757" as="geometry">
+            <Array as="points">
+              <mxPoint x="1190" y="555" />
+            </Array>
+            <mxPoint x="860" y="540" as="sourcePoint" />
+            <mxPoint x="1200" y="555" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_c10" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;entryX=0;entryY=0.407;entryDx=0;entryDy=0;entryPerimeter=0;" target="cashier" value="New order notification">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="840" y="555" as="sourcePoint" />
+            <mxPoint x="1200" y="575" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_d1" edge="1" parent="1" source="developer" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;exitX=0;exitY=0;exitDx=0;exitDy=0;" target="system" value="Structured webhook payload">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1200" y="605" as="sourcePoint" />
+            <mxPoint x="910" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow_d2" edge="1" parent="1" source="system" style="html=1;verticalAlign=bottom;endArrow=open;endFill=0;fontSize=10;entryX=-0.007;entryY=0.915;entryDx=0;entryDy=0;entryPerimeter=0;" target="developer" value="Order processing &amp; reservation result">
+          <mxGeometry relative="1" x="-0.0006" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="820" y="580" as="sourcePoint" />
+            <mxPoint x="1200" y="635" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

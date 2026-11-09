@@ -5,6 +5,7 @@ Thư mục và tài liệu này lưu trữ các đường dẫn trực tiếp đ
 
 ## 2. Danh sách liên kết Figma
 * **Link File Thiết Kế Gốc (Figma File):** https://www.figma.com/design/v6stFIIju7jC9GTChPNUZd/Fronted-POS?node-id=0-1&p=f&t=uWcfWRE4e8z6vzmK-0
+* **https://www.figma.com/design/C5s2KIVtVDAZTihwSFpNGq/login?node-id=4-19&p=f&t=0nE3eosZtarjrN0R-0
 * **Link Bản Thử Nghiệm (Figma Prototype):** [Chạy thử nghiệm giao diện (Prototype)](https://www.figma.com) *(Dán link prototype nếu có)*
 https://www.figma.com/proto/v6stFIIju7jC9GTChPNUZd/Fronted-POS?node-id=2010-4&p=f&t=U7DrUe9vQhokYtMX-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1
 ## 3. Hướng dẫn truy cập

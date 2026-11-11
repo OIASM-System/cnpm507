@@ -2,8 +2,8 @@
 
 | No. | Directory | Description | Status |
 |---|---|---|---|
-| 01 | [EP01](./EP01/) | EP01 | 🟢 Completed |
-| 02 | [EP02](./EP02/) | EP02 | 🟢 Completed |
+| 01 | [EP01](./EP01/) | EP-01 | 🟢 Completed |
+| 02 | [EP02](./EP02/) | EP-02 | 🟢 Completed |
 | 03 | [EP-03](./EP-03/) | EP-03 | 🟢 Completed |
 | 04 | [EP-04](./EP-04/) | EP-04 | 🟢 Completed |
 | 05 | [EP05 Thiết kế hệ thống và thiết kế cơ sở dữ liệu](./EP05%20Thi%E1%BA%BFt%20k%E1%BA%BF%20h%E1%BB%87%20th%E1%BB%91ng%20v%C3%A0%20thi%E1%BA%BFt%20k%E1%BA%BF%20c%C6%A1%20s%E1%BB%9F%20d%E1%BB%AF%20li%E1%BB%87u/) | EP-05 | 🟢 Completed |

@@ -2599,19 +2599,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\trith\\.nuget\\packages\\": {}
+    "C:\\Users\\HP\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\OISM-backend\\oism-backend-tools\\backend\\src\\OISM.WebAPI\\OISM.WebAPI.csproj",
+      "projectUniqueName": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.WebAPI\\OISM.WebAPI.csproj",
       "projectName": "OISM.WebAPI",
-      "projectPath": "D:\\OISM-backend\\oism-backend-tools\\backend\\src\\OISM.WebAPI\\OISM.WebAPI.csproj",
-      "packagesPath": "C:\\Users\\trith\\.nuget\\packages\\",
-      "outputPath": "D:\\OISM-backend\\oism-backend-tools\\backend\\src\\OISM.WebAPI\\obj\\",
+      "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.WebAPI\\OISM.WebAPI.csproj",
+      "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.WebAPI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\trith\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -2623,11 +2623,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\OISM-backend\\oism-backend-tools\\backend\\src\\OISM.Application\\OISM.Application.csproj": {
-              "projectPath": "D:\\OISM-backend\\oism-backend-tools\\backend\\src\\OISM.Application\\OISM.Application.csproj"
+            "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj": {
+              "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj"
             },
-            "D:\\OISM-backend\\oism-backend-tools\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj": {
-              "projectPath": "D:\\OISM-backend\\oism-backend-tools\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj"
+            "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj"
             }
           }
         }

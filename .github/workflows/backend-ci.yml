@@ -1,0 +1,36 @@
+name: Backend CI
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "OISM-backend/oism-backend-tools/backend/**"
+      - ".github/workflows/backend-ci.yml"
+  pull_request:
+    branches: ["**"]
+    paths:
+      - "OISM-backend/oism-backend-tools/backend/**"
+      - ".github/workflows/backend-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Restore and build (.NET 8)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        working-directory: OISM-backend/oism-backend-tools/backend
+        run: dotnet restore OISM.sln
+
+      - name: Build solution
+        working-directory: OISM-backend/oism-backend-tools/backend
+        run: dotnet build OISM.sln --configuration Release --no-restore

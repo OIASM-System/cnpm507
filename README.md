@@ -19,5 +19,8 @@
 | 13 | [EP13](./EP13/) | EP13 |
 | 14 | [14-ai-reordering](./14-ai-reordering/) | EP14 |
 | 15 | [backend](./backend/) | Backend |
-| 16 | [frontend](./frontend/) | Frontend |
+| Directory | Description | Status |
+|---|---|---|
+| [frontend](./frontend/) | Frontend Development – User Interface and System Integration | 🟡 In Progress |
+
 | 17 | [assets](./assets/) | Project Assets |

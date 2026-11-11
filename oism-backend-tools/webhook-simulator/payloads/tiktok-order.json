@@ -1,0 +1,10 @@
+{
+  "platform": "tiktok",
+  "eventType": "order.created",
+  "order": {
+    "externalOrderId": "TT-DEMO-0001",
+    "status": "UNPAID",
+    "currency": "VND",
+    "items": [{ "sku": "SKU-DEMO-001", "quantity": 1, "unitPrice": 150000 }]
+  }
+}

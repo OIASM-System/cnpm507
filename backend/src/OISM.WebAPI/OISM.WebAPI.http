@@ -1,0 +1,6 @@
+@OISM.WebAPI_HostAddress = http://localhost:5185
+
+GET {{OISM.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

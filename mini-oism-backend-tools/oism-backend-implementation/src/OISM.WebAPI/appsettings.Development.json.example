@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "OismDb": "Host=localhost;Port=5432;Database=oism_db;Username=postgres;Password=YOUR_PASSWORD"
+  }
+}

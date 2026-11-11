@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.env
+output/
+**/reports/*.json
+!**/reports/.gitkeep

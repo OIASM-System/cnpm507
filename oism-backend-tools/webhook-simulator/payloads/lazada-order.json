@@ -1,0 +1,10 @@
+{
+  "platform": "lazada",
+  "eventType": "order.created",
+  "order": {
+    "externalOrderId": "LZ-DEMO-0001",
+    "status": "pending",
+    "currency": "VND",
+    "items": [{ "sku": "SKU-DEMO-001", "quantity": 1, "unitPrice": 150000 }]
+  }
+}

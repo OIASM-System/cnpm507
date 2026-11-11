@@ -1,0 +1,10 @@
+{
+  "platform": "shopee",
+  "eventType": "order.created",
+  "order": {
+    "externalOrderId": "SP-DEMO-0001",
+    "status": "READY_TO_SHIP",
+    "currency": "VND",
+    "items": [{ "sku": "SKU-DEMO-001", "quantity": 1, "unitPrice": 150000 }]
+  }
+}

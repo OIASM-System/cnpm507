@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "orYH9djh9/G9DQYN5uwXZvrPeSJFEexc2njiAOuHbh0=",
+  "Source": "OISM.WebAPI",
+  "BasePath": "_content/OISM.WebAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

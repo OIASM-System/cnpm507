@@ -1,0 +1,23 @@
+{
+  "name": "oism-backend-tools",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "webhook": "tsx webhook-simulator/src/index.ts",
+    "concurrency": "tsx concurrency-runner/src/index.ts",
+    "generate": "tsx data-generator/src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.9.0",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

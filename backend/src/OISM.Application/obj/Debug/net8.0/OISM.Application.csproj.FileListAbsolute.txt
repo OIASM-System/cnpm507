@@ -44,3 +44,19 @@ C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Application\
 C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\refint\OISM.Application.dll
 C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\OISM.Application.pdb
 C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\ref\OISM.Application.dll
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\bin\Debug\net8.0\OISM.Application.deps.json
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\bin\Debug\net8.0\OISM.Application.dll
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\bin\Debug\net8.0\OISM.Application.pdb
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\bin\Debug\net8.0\OISM.Domain.dll
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\bin\Debug\net8.0\OISM.Domain.pdb
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\OISM.Application.csproj.AssemblyReference.cache
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\OISM.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\OISM.Application.AssemblyInfoInputs.cache
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\OISM.Application.AssemblyInfo.cs
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\OISM.Application.csproj.CoreCompileInputs.cache
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\OISM.Application.sourcelink.json
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\OISM.App.C7DB7A39.Up2Date
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\OISM.Application.dll
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\refint\OISM.Application.dll
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\OISM.Application.pdb
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Application\obj\Debug\net8.0\ref\OISM.Application.dll

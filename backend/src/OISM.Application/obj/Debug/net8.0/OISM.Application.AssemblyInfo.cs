@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OISM.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+994871d7685a9dbd0139f04c52b974b699bec165")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a57876981fce489f9c6da72b2ee649b80632de87")]
 [assembly: System.Reflection.AssemblyProductAttribute("OISM.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OISM.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

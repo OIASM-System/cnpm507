@@ -56,3 +56,23 @@ C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructu
 C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.pdb
 C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.genruntimeconfig.cache
 C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\ref\OISM.Infrastructure.dll
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Infrastructure.deps.json
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Infrastructure.runtimeconfig.json
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Infrastructure.dll
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Infrastructure.pdb
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Application.dll
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Domain.dll
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Domain.pdb
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Application.pdb
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.AssemblyInfo.cs
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.sourcelink.json
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Inf.7332E02A.Up2Date
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.dll
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\refint\OISM.Infrastructure.dll
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.pdb
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.genruntimeconfig.cache
+C:\Users\HP\OneDrive\Documents\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\ref\OISM.Infrastructure.dll

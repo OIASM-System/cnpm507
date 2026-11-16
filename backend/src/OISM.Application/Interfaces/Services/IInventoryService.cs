@@ -11,6 +11,11 @@ public interface IInventoryService
         Guid productId,
         CancellationToken cancellationToken = default);
 
+    Task<List<InventoryListResponse>> GetAllInventoryAsync(
+        Guid tenantId,
+        Guid branchId,
+        CancellationToken cancellationToken = default);
+
     Task AdjustInventoryAsync(
         Guid tenantId,
         AdjustInventoryRequest request,

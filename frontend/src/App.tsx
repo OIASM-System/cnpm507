@@ -7,7 +7,7 @@ import {
   ShoppingCart, SlidersHorizontal, Sparkles, Store, Tag, TrendingDown, TrendingUp, Truck, Users,
   Wallet, Wifi, WifiOff, X, ScanBarcode, Banknote, Trash2, Receipt, RefreshCw, CircleDollarSign
 } from 'lucide-react';
-import { api, apiBase, getToken, setToken } from './api';
+import { apiBase, checkBackend, getBranchInventory } from './api';
 
 type Mode = 'admin' | 'pos';
 type Product = { id: string; name: string; sku: string; category: string; price: number; stock: number; color: string; icon: string };
@@ -48,9 +48,9 @@ function App(){
   const categories=['Tất cả',...Array.from(new Set(products.map(p=>p.category)))];
   function addToCart(p:Product){setCart(old=>{const found=old.find(x=>x.id===p.id);return found?old.map(x=>x.id===p.id?{...x,qty:x.qty+1}:x):[...old,{...p,qty:1}]});setToast(`Đã thêm ${p.name} vào giỏ hàng`)}
   function updateQty(id:string,delta:number){setCart(old=>old.map(x=>x.id===id?{...x,qty:x.qty+delta}:x).filter(x=>x.qty>0))}
-  async function checkApi(){try{const response=await fetch(`${apiBase}/`);if(!response.ok)throw new Error(`HTTP ${response.status}`);setApiStatus('connected');setApiNote('Backend đang phản hồi. Các module auth/catalog/POS chưa có controller trong source hiện tại.')}catch(e){setApiStatus('offline');setApiNote(e instanceof Error?e.message:'Không thể kết nối API')}}
+  async function checkApi(){try{const message=await checkBackend();setApiStatus('connected');setApiNote(`${message || 'Backend đang phản hồi.'} API hiện có: inventory, inventory ledger và orders. Danh mục sản phẩm, đăng nhập và POS checkout chưa có endpoint trong backend hiện tại.`)}catch(e){setApiStatus('offline');setApiNote(e instanceof Error?e.message:'Không thể kết nối API')}}
   async function login(){setToast('Backend hiện chưa có AuthController hoặc endpoint đăng nhập. Chưa thể xác thực tài khoản từ giao diện.');setShowCheckout(false)}
-  async function loadProducts(){setToast('Backend hiện chưa có ProductsController/endpoint danh mục. Đang giữ dữ liệu mẫu để bạn kiểm thử giao diện.');}
+  async function loadProducts(){try{const rows=await getBranchInventory();setProducts(current=>{const bySku=new Map(rows.map(row=>[row.sku.toLowerCase(),row]));return current.map(product=>{const row=bySku.get(product.sku.toLowerCase());return row?{...product,id:row.productId,stock:row.available}:product}).concat(rows.filter(row=>!current.some(product=>product.sku.toLowerCase()===row.sku.toLowerCase())).map(row=>({id:row.productId,name:row.name,sku:row.sku,category:'Khác',price:0,stock:row.available,color:'coffee',icon:'📦'})))});setApiStatus('connected');setApiNote(`Đã đồng bộ ${rows.length} dòng tồn kho từ API. Giá bán và danh mục vẫn là dữ liệu giao diện vì backend chưa cung cấp Products API.`);setToast(`Đã tải ${rows.length} dòng tồn kho từ backend.`)}catch(e){setApiStatus('offline');setApiNote(e instanceof Error?e.message:'Không tải được tồn kho');setToast(e instanceof Error?e.message:'Không tải được tồn kho từ API')}}
   async function checkout(){if(!cart.length)return;setToast('Chưa thể ghi nhận thanh toán: backend hiện chưa có POS checkout endpoint. Giỏ hàng vẫn được giữ trên thiết bị.');}
   function addProduct(e:React.FormEvent<HTMLFormElement>){e.preventDefault();const d=new FormData(e.currentTarget);const p:Product={id:`p${Date.now()}`,name:String(d.get('name')),sku:String(d.get('sku')),category:String(d.get('category')),price:Number(d.get('price')),stock:Number(d.get('stock')),color:'coffee',icon:'📦'};setProducts(old=>[p,...old]);setShowAddProduct(false);setToast('Đã thêm sản phẩm vào danh mục')}
   const switchMode=(m:Mode)=>{setMode(m);setMobileNav(false);setPage(m==='admin'?'Tổng quan':'Bán hàng')};

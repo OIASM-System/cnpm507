@@ -1,34 +1,65 @@
-# OISM Frontend
+# OISM Frontend – Admin Dashboard + POS PWA
 
-React + TypeScript + Vite frontend containing the Admin Dashboard and POS PWA experience.
+Frontend React + TypeScript + Vite. Admin Dashboard và POS PWA dùng chung một ứng dụng, truy cập bằng `/admin` và `/pos`.
 
-## Requirements
-- Node.js 20+
+## Yêu cầu
+- Node.js 20 LTS hoặc mới hơn
 - npm 10+
-- OISM ASP.NET Core API (optional for UI preview; required for authenticated/persisted operations)
+- Backend ASP.NET Core chạy HTTP tại `http://localhost:5185` (để kiểm thử tích hợp API)
 
-## Run locally
-```bash
+## Chạy lần đầu (Windows PowerShell)
+```powershell
 cd frontend
-npm install
-cp .env.example .env
-# Update VITE_API_BASE_URL to your backend URL
-npm run dev
+Copy-Item .env.example .env
+npm.cmd install
+npm.cmd run dev
+```
+Mở `http://localhost:5173/admin` hoặc `http://localhost:5173/pos`.
+
+> Nếu bạn giải nén riêng thư mục frontend này thành thư mục dự án, chạy lệnh trong chính thư mục có `package.json` (không chạy `cd frontend` lần nữa).
+
+## Kết nối backend
+Vite proxy `/backend/*` sang `http://localhost:5185/*`. Cấu hình trong `.env`:
+```env
+VITE_API_BASE_URL=/backend
+VITE_TENANT_ID=<GUID tenant thực tế>
+VITE_BRANCH_ID=<GUID chi nhánh thực tế>
+```
+Hai GUID phải là dữ liệu thực có trong database của backend. Sau khi sửa `.env`, khởi động lại Vite một lần.
+
+### Endpoint có thật trong backend đính kèm
+- `GET /` – health check đơn giản
+- `GET /api/inventory/all?branchId={guid}` – tồn kho theo chi nhánh, yêu cầu `X-Tenant-Id`
+- `GET /api/inventory?branchId={guid}&productId={guid}` – tồn kho một sản phẩm
+- `PUT /api/inventory/adjust` – điều chỉnh tồn kho
+- `GET /api/inventory/ledger?branchId={guid}` – lịch sử biến động kho
+- `POST /api/orders` – tạo đơn; yêu cầu `X-Tenant-Id`, `BranchId`, `Items[{ProductId,Quantity}]`
+- `GET /api/orders/{orderId}`, `POST /api/orders/{orderId}/confirm`, `POST /api/orders/{orderId}/cancel`
+
+### Giới hạn backend cần biết
+Source backend trong ZIP **chưa có** ProductsController, AuthController, API danh sách đơn hàng, hoặc endpoint checkout/thanh toán POS. Vì vậy:
+- Catalog và các chỉ số dashboard mặc định là dữ liệu minh họa trong frontend.
+- Nút đồng bộ tồn kho gọi endpoint tồn kho thật khi đã cấu hình Tenant ID và Branch ID; số lượng được ghép theo SKU.
+- Giá bán, danh mục và sản phẩm không có trong response inventory nên không được giả định là dữ liệu backend.
+- Giao diện không giả vờ đăng nhập hay thanh toán thành công khi API tương ứng chưa tồn tại.
+- Tạo đơn thật cần ProductId GUID và BranchId hợp lệ; dữ liệu catalog minh họa hiện không tự tạo được đơn hợp lệ.
+
+## Build kiểm tra
+```powershell
+npm.cmd run build
 ```
 
-Open `http://localhost:5173`. Use the bottom-right switch to move between **Admin** and **POS**.
-
-## Production build
-```bash
-npm run build
-npm run preview
+## Cấu trúc
+```text
+src/
+  App.tsx       Admin Dashboard + POS PWA
+  api.ts        HTTP client, tenant header, inventory API
+  main.tsx      React entry point
+  styles.css    Design system và responsive layouts
+public/
+  sw.js         Service worker (chỉ đăng ký ở production)
+  manifest.webmanifest
 ```
 
-## API integration
-The API client reads `VITE_API_BASE_URL` (default `/backend` (Vite proxies to `http://localhost:5185`)), can send a stored Bearer access token, and adds `X-Tenant-Id` when `VITE_TENANT_ID` is configured. The uploaded backend currently exposes `GET/PUT /api/inventory`, `GET /api/inventory/all`, `GET /api/inventory/ledger`, and `POST/GET /api/orders` routes. The API overview in `EP-09` is a proposed contract; the current backend source does not yet implement authentication, product catalog, order listing, or POS checkout endpoints. The UI therefore does not pretend those proposed endpoints exist. Seed catalog and dashboard records are illustrative in-memory data; POS cart state is retained locally, but payment is not submitted until a real checkout endpoint is implemented. The current backend requires a valid `VITE_TENANT_ID` header for order/inventory controllers. For production cross-origin hosting, configure CORS or a reverse proxy on the backend; the included proxy is for local Vite development.
-
-## Current UI coverage
-- Admin: dashboard, sales reports, products, inventory and append-only ledger overview, orders, branches, users/RBAC overview, settings/API status.
-- POS: searchable catalog, category filters, SKU entry/search, cart quantity controls, discount toggle, cash/change calculation, cash/transfer/card selection, responsive cart drawer, online/offline indicator.
-
-Some endpoints and workflows in the source documentation are marked proposed/TBD or are not present in the current OpenAPI contract. Those views are presented as UI foundations and should be wired when the backend contract is finalized.
+## Ghi chú lỗi Vite restart
+Bản bàn giao loại bỏ các thư mục package/app monorepo rỗng khỏi frontend và dùng một Vite app duy nhất. Các file cấu hình TypeScript/Vite được điền đầy đủ, không còn file cấu hình rỗng được Vite theo dõi. Vite dùng `strictPort` để báo rõ nếu cổng 5173 đang bị chiếm thay vì tự đổi cổng.

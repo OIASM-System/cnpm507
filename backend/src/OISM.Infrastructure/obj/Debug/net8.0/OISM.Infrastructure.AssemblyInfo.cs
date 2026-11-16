@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OISM.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bbab48e92be9e50189c75f60769caa2f62ed943a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cdfd8b3050353dd661d34401268699a271ac61fd")]
 [assembly: System.Reflection.AssemblyProductAttribute("OISM.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OISM.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

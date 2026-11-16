@@ -1,19 +1,13 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0',
-    port: 5173,
-    strictPort: true,
-    proxy: {
-      '/backend': {
-        target: 'http://localhost:5185',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/backend/, ''),
-      },
-    },
-  },
-  preview: { host: '0.0.0.0', port: 4173, strictPort: true },
-});
+    watch: {
+      // Bỏ qua không theo dõi các thư mục gây trigger restart liên tục
+      ignored: ['**/node_modules/**', '**/dist/**', '**/.git/**']
+    }
+  }
+})

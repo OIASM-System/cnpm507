@@ -36,3 +36,23 @@ D:\OISM-backend\oism-backend-tools\backend\src\OISM.Infrastructure\obj\Debug\net
 D:\OISM-backend\oism-backend-tools\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.pdb
 D:\OISM-backend\oism-backend-tools\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.genruntimeconfig.cache
 D:\OISM-backend\oism-backend-tools\backend\src\OISM.Infrastructure\obj\Debug\net8.0\ref\OISM.Infrastructure.dll
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Infrastructure.deps.json
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Infrastructure.runtimeconfig.json
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Infrastructure.dll
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Infrastructure.pdb
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Application.dll
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Domain.dll
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Domain.pdb
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\bin\Debug\net8.0\OISM.Application.pdb
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.AssemblyInfo.cs
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.sourcelink.json
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Inf.7332E02A.Up2Date
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.dll
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\refint\OISM.Infrastructure.dll
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.pdb
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\OISM.Infrastructure.genruntimeconfig.cache
+C:\Users\trith\OneDrive\Tài liệu\GitHub\cnpm507\backend\src\OISM.Infrastructure\obj\Debug\net8.0\ref\OISM.Infrastructure.dll

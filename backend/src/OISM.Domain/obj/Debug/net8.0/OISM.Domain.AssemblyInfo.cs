@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OISM.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cdfd8b3050353dd661d34401268699a271ac61fd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+994871d7685a9dbd0139f04c52b974b699bec165")]
 [assembly: System.Reflection.AssemblyProductAttribute("OISM.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OISM.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

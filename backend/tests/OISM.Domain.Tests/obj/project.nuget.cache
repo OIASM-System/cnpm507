@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Q2wg/cgfU44=",
+  "dgSpecHash": "4wd3TY2jGUg=",
   "success": true,
-  "projectFilePath": "c:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\OISM.Domain.Tests.csproj",
+  "projectFilePath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\OISM.Domain.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\trith\\.nuget\\packages\\microsoft.codecoverage\\17.12.0\\microsoft.codecoverage.17.12.0.nupkg.sha512",
     "C:\\Users\\trith\\.nuget\\packages\\microsoft.net.test.sdk\\17.12.0\\microsoft.net.test.sdk.17.12.0.nupkg.sha512",

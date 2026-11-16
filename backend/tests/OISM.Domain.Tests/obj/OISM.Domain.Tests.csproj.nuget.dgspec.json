@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\OISM.Domain.Tests.csproj": {}
+    "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\OISM.Domain.Tests.csproj": {}
   },
   "projects": {
     "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj": {
@@ -62,14 +62,14 @@
         }
       }
     },
-    "c:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\OISM.Domain.Tests.csproj": {
+    "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\OISM.Domain.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\OISM.Domain.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\OISM.Domain.Tests.csproj",
         "projectName": "OISM.Domain.Tests",
-        "projectPath": "c:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\OISM.Domain.Tests.csproj",
+        "projectPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\OISM.Domain.Tests.csproj",
         "packagesPath": "C:\\Users\\trith\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\obj\\",
+        "outputPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\tests\\OISM.Domain.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\trith\\AppData\\Roaming\\NuGet\\NuGet.Config"

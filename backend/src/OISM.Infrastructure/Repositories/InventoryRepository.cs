@@ -1,6 +1,5 @@
 
 using Microsoft.EntityFrameworkCore;
-using OISM.Application.DTOs.Inventory;
 using OISM.Application.Interfaces.Repositories;
 using OISM.Domain.Entities;
 using OISM.Infrastructure.Persistence;
@@ -16,6 +15,7 @@ public class InventoryRepository : IInventoryRepository
         _db = db;
     }
 
+    // Lấy tồn kho của một sản phẩm tại một chi nhánh
     public Task<Inventory?> GetByProductAndBranchAsync(
         Guid tenantId,
         Guid branchId,
@@ -29,6 +29,7 @@ public class InventoryRepository : IInventoryRepository
             ct);
     }
 
+    // Lấy tồn kho và khóa bản ghi khi điều chỉnh
     public Task<Inventory?> GetForUpdateAsync(
         Guid tenantId,
         Guid branchId,
@@ -45,46 +46,19 @@ public class InventoryRepository : IInventoryRepository
             .FirstOrDefaultAsync(ct);
     }
 
-    // LEFT JOIN Inventories với Products để lấy SKU và Name
-    public async Task<List<InventoryListResponse>> GetAllByBranchAsync(
+    // Lấy toàn bộ tồn kho theo chi nhánh
+    public async Task<List<Inventory>> GetAllByBranchAsync(
         Guid tenantId,
         Guid branchId,
         CancellationToken ct = default)
     {
-        var query =
-            from inventory in _db.Inventories.AsNoTracking()
-            join product in _db.Products.AsNoTracking()
-                on new
-                {
-                    inventory.ProductId,
-                    inventory.TenantId
-                }
-                equals new
-                {
-                    ProductId = product.Id,
-                    product.TenantId
-                }
-                into productGroup
-
-            from product in productGroup.DefaultIfEmpty()
-
-            where inventory.TenantId == tenantId
-               && inventory.BranchId == branchId
-
-            select new InventoryListResponse
-            {
-                ProductId = inventory.ProductId,
-                Sku = product == null ? "" : product.Sku,
-                Name = product == null
-                    ? "Sản phẩm không xác định"
-                    : product.Name,
-                OnHand = inventory.OnHand,
-                Reserved = inventory.Reserved
-            };
-
-        return await query.ToListAsync(ct);
+        return await _db.Inventories
+            .Where(x => x.TenantId == tenantId
+                     && x.BranchId == branchId)
+            .ToListAsync(ct);
     }
 
+    // Thêm bản ghi tồn kho
     public Task AddAsync(
         Inventory inventory,
         CancellationToken ct = default)

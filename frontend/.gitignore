@@ -1,7 +1,6 @@
-# .NET generated files
-**/bin/
-**/obj/
-*.cache
-
-# Visual Studio
-.vs/
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+.vite/

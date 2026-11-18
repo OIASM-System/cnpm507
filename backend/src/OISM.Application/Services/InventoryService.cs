@@ -44,16 +44,21 @@ public class InventoryService : IInventoryService
     }
 
     // Lấy toàn bộ tồn kho theo chi nhánh
-    
-public async Task<List<InventoryListResponse>> GetAllInventoryAsync(
-    Guid tenantId,
-    Guid branchId,
-    CancellationToken cancellationToken = default)
-{
-    return await _inventories.GetAllByBranchAsync(
-        tenantId, branchId, cancellationToken);
-}
+    public async Task<List<InventoryListResponse>> GetAllInventoryAsync(
+        Guid tenantId,
+        Guid branchId,
+        CancellationToken cancellationToken = default)
+    {
+        var inventories = await _inventories.GetAllByBranchAsync(
+            tenantId, branchId, cancellationToken);
 
+        return inventories.Select(x => new InventoryListResponse
+        {
+            ProductId = x.ProductId,
+            OnHand = x.OnHand,
+            Reserved = x.Reserved
+        }).ToList();
+    }
 
     public async Task AdjustInventoryAsync(
         Guid tenantId,

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OISM.WebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+46d8aab84b8e09842486f857b7c424eca7c97ea5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+74907b114d1a02b4d94e3bad0149e0c429a4a1db")]
 [assembly: System.Reflection.AssemblyProductAttribute("OISM.WebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OISM.WebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

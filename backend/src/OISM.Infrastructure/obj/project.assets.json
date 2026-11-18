@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "targets": {
     "net8.0": {
       "Humanizer.Core/2.14.1": {
@@ -2144,19 +2144,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\HP\\.nuget\\packages\\": {}
+    "C:\\Users\\trith\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj",
+      "projectUniqueName": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj",
       "projectName": "OISM.Infrastructure",
-      "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj",
-      "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\obj\\",
+      "projectPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj",
+      "packagesPath": "C:\\Users\\trith\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\trith\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -2166,13 +2166,14 @@
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj": {
-              "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj"
+            "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj": {
+              "projectPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj"
             },
-            "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj": {
-              "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj"
+            "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj": {
+              "projectPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj"
             }
           }
         }
@@ -2186,10 +2187,12 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "10.0.400"
     },
     "frameworks": {
       "net8.0": {
+        "framework": "net8.0",
         "targetAlias": "net8.0",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Design": {
@@ -2214,12 +2217,26 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[8.0.34, 8.0.34]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[8.0.34, 8.0.34]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[8.0.34, 8.0.34]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.427/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.404/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

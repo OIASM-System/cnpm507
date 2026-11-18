@@ -36,13 +36,17 @@ Hai GUID phải là dữ liệu thực có trong database của backend. Sau khi
 - `POST /api/orders` – tạo đơn; yêu cầu `X-Tenant-Id`, `BranchId`, `Items[{ProductId,Quantity}]`
 - `GET /api/orders/{orderId}`, `POST /api/orders/{orderId}/confirm`, `POST /api/orders/{orderId}/cancel`
 
+### Luồng đã nối với backend thật
+- **POS thanh toán**: `POST /api/orders` → `POST /api/orders/{id}/confirm` → `GET /api/orders/{id}`. Tổng tiền hiển thị sau đó là số do server tính; giá server trả về được lưu lại làm giá hiển thị cho SKU.
+- **Admin > Đơn hàng**: theo dõi các đơn tạo trên thiết bị này, làm mới trạng thái, xác nhận/hủy đơn `Pending`.
+- **Admin > Kho hàng**: đồng bộ tồn kho, điều chỉnh tồn (`PUT /api/inventory/adjust`), xem sổ kho (`GET /api/inventory/ledger`).
+- Backend trả `OrderStatus` dạng số (0..4); frontend tự ánh xạ sang nhãn.
+
 ### Giới hạn backend cần biết
-Source backend trong ZIP **chưa có** ProductsController, AuthController, API danh sách đơn hàng, hoặc endpoint checkout/thanh toán POS. Vì vậy:
-- Catalog và các chỉ số dashboard mặc định là dữ liệu minh họa trong frontend.
-- Nút đồng bộ tồn kho gọi endpoint tồn kho thật khi đã cấu hình Tenant ID và Branch ID; số lượng được ghép theo SKU.
-- Giá bán, danh mục và sản phẩm không có trong response inventory nên không được giả định là dữ liệu backend.
-- Giao diện không giả vờ đăng nhập hay thanh toán thành công khi API tương ứng chưa tồn tại.
-- Tạo đơn thật cần ProductId GUID và BranchId hợp lệ; dữ liệu catalog minh họa hiện không tự tạo được đơn hợp lệ.
+Backend **chưa có**: đăng nhập/JWT, API sản phẩm và giá, API danh sách đơn, báo cáo, giảm giá, ghi nhận thanh toán. Vì vậy:
+- Danh mục POS lấy từ tồn kho thật (cần `VITE_TENANT_ID`, `VITE_BRANCH_ID`); giá hiển thị nhập tay ở Admin > Sản phẩm hoặc học từ đơn đầu tiên. Giá thật luôn do server tính.
+- Tiền khách đưa/tiền thừa chỉ tính trên giao diện, không lưu server. Giảm giá chưa được hỗ trợ nên chặn thanh toán khi có giảm giá.
+- Số liệu Tổng quan/Báo cáo, Chi nhánh, Nhân viên là dữ liệu minh họa.
 
 ## Build kiểm tra
 ```powershell

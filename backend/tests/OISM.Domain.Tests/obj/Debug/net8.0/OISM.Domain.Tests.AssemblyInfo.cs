@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OISM.Domain.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+994871d7685a9dbd0139f04c52b974b699bec165")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+46d8aab84b8e09842486f857b7c424eca7c97ea5")]
 [assembly: System.Reflection.AssemblyProductAttribute("OISM.Domain.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OISM.Domain.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

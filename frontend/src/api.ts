@@ -3,6 +3,7 @@ const API_BASE = (import.meta.env.VITE_API_BASE_URL || '/backend').replace(/\/$/
 export const apiBase = API_BASE;
 export const tenantId = import.meta.env.VITE_TENANT_ID || '';
 export const branchId = import.meta.env.VITE_BRANCH_ID || '';
+export const isGuid = (v: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 
 export const getToken = () => localStorage.getItem('oism.accessToken');
 export function setToken(token: string | null) {
@@ -20,47 +21,81 @@ function buildHeaders(init: RequestInit = {}) {
   return headers;
 }
 
+function requireConfig() {
+  if (!tenantId) throw new Error('Thiếu VITE_TENANT_ID trong file .env.');
+  if (!branchId) throw new Error('Thiếu VITE_BRANCH_ID trong file .env.');
+}
+
 export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_BASE}${path.startsWith('/') ? path : `/${path}`}`, {
     ...init,
     headers: buildHeaders(init),
   });
+  const type = response.headers.get('content-type') || '';
   if (!response.ok) {
-    const body = await response.json().catch(() => ({}));
+    const body = type.includes('json') ? await response.json().catch(() => ({})) : {};
     throw new Error(body.message || body.detail || body.title || `API trả về HTTP ${response.status}`);
   }
   if (response.status === 204) return undefined as T;
+  if (!type.includes('json')) {
+    throw new Error('Phản hồi không phải JSON. Kiểm tra proxy /backend trong vite.config.ts và backend đang chạy ở http://localhost:5185.');
+  }
   return response.json() as Promise<T>;
 }
 
 export async function checkBackend(): Promise<string> {
   const response = await fetch(`${API_BASE}/`, { headers: buildHeaders() });
+  const text = await response.text();
   if (!response.ok) throw new Error(`Backend trả về HTTP ${response.status}`);
-  return response.text();
+  // Nếu proxy sai, Vite trả index.html (HTTP 200) -> không được coi là đã kết nối.
+  if (/<html/i.test(text) || !/OISM/i.test(text)) {
+    throw new Error('/backend không trỏ tới OISM backend (nhận về HTML). Kiểm tra proxy trong vite.config.ts và backend ở http://localhost:5185.');
+  }
+  return text;
 }
 
-export type InventoryItem = {
-  productId: string;
-  sku: string;
-  name: string;
-  onHand: number;
-  reserved: number;
-  available: number;
-};
+/* ---------- Inventory ---------- */
+export type InventoryItem = { productId: string; sku: string; name: string; onHand: number; reserved: number; available: number };
 
 export async function getBranchInventory(): Promise<InventoryItem[]> {
-  if (!tenantId) throw new Error('Thiếu VITE_TENANT_ID trong file .env.');
-  if (!branchId) throw new Error('Thiếu VITE_BRANCH_ID trong file .env.');
-  const query = new URLSearchParams({ branchId });
-  return api<InventoryItem[]>(`/api/inventory/all?${query.toString()}`);
+  requireConfig();
+  return api<InventoryItem[]>(`/api/inventory/all?${new URLSearchParams({ branchId })}`);
 }
 
-export type CreateOrderPayload = {
-  branchId: string;
-  source: string;
-  items: { productId: string; quantity: number }[];
+export const adjustInventory = (productId: string, newOnHand: number) => {
+  requireConfig();
+  return api<void>('/api/inventory/adjust', { method: 'PUT', body: JSON.stringify({ branchId, productId, newOnHand }) });
 };
 
-export function createOrder(payload: CreateOrderPayload) {
-  return api('/api/orders', { method: 'POST', body: JSON.stringify(payload) });
+export type LedgerEntry = {
+  id: string; productId: string; orderId: string | null; movementType: string;
+  quantity: number; onHandAfter: number; reservedAfter: number; createdAt: string;
+};
+
+export function getLedger(): Promise<LedgerEntry[]> {
+  requireConfig();
+  return api<LedgerEntry[]>(`/api/inventory/ledger?${new URLSearchParams({ branchId })}`);
 }
+
+/* ---------- Orders ---------- */
+const ORDER_STATUS = ['Draft', 'Pending', 'Confirmed', 'Cancelled', 'Rejected'];
+// Backend trả enum dạng số (0..4) vì chưa bật JsonStringEnumConverter.
+export const statusName = (s: number | string) => (typeof s === 'number' ? ORDER_STATUS[s] ?? String(s) : s);
+
+export type OrderItemDto = { productId: string; sku: string; productName: string; quantity: number; unitPrice: number; lineTotal: number };
+export type OrderDto = {
+  id: string; orderNumber: string; branchId: string; source: string;
+  status: number | string; totalAmount: number; createdAt: string; items: OrderItemDto[];
+};
+export type CreateOrderPayload = { branchId: string; source: string; items: { productId: string; quantity: number }[] };
+
+export const createOrder = (payload: CreateOrderPayload) => api<OrderDto>('/api/orders', { method: 'POST', body: JSON.stringify(payload) });
+export const getOrder = (id: string) => api<OrderDto>(`/api/orders/${id}`);
+export const confirmOrder = (id: string) => api<void>(`/api/orders/${id}/confirm`, { method: 'POST' });
+export const cancelOrder = (id: string) => api<void>(`/api/orders/${id}/cancel`, { method: 'POST' });
+
+/* ---------- Lưu cục bộ (backend chưa có API danh sách đơn / giá sản phẩm) ---------- */
+export const loadOrders = (): OrderDto[] => { try { return JSON.parse(localStorage.getItem('oism.orders') || '[]'); } catch { return []; } };
+export const saveOrders = (orders: OrderDto[]) => localStorage.setItem('oism.orders', JSON.stringify(orders.slice(0, 100)));
+export const loadPrices = (): Record<string, number> => { try { return JSON.parse(localStorage.getItem('oism.prices') || '{}'); } catch { return {}; } };
+export const savePrice = (sku: string, price: number) => { const m = loadPrices(); m[sku.toLowerCase()] = price; localStorage.setItem('oism.prices', JSON.stringify(m)); };

@@ -1,0 +1,18 @@
+{
+  "name": "OISM POS",
+  "short_name": "OISM POS",
+  "description": "Omnichannel Inventory and Sales Management POS",
+  "start_url": "/pos",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f8fc",
+  "theme_color": "#1e3a8a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

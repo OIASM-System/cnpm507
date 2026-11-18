@@ -1,98 +1,289 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
-  Activity, AlertTriangle, ArrowDownToLine, ArrowLeftRight, ArrowUpRight, BarChart3, Bell, Boxes,
-  Building2, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleHelp,
-  ClipboardList, Clock3, CreditCard, Download, Ellipsis, FileText, Filter, Grid2X2, LayoutDashboard,
-  LogOut, Menu, Minus, MoreHorizontal, Package, Plus, Printer, Search, Settings, ShoppingBag,
-  ShoppingCart, SlidersHorizontal, Sparkles, Store, Tag, TrendingDown, TrendingUp, Truck, Users,
-  Wallet, Wifi, WifiOff, X, ScanBarcode, Banknote, Trash2, Receipt, RefreshCw, CircleDollarSign
+  Activity, AlertTriangle, ArrowDownUp, Boxes, ClipboardList, LayoutDashboard,
+  Package, RefreshCw, Search, ShoppingCart, Warehouse, CheckCircle2, Plus,
+  X, History, CircleDollarSign, FileText
 } from 'lucide-react';
-import { apiBase, checkBackend, getBranchInventory } from './api';
+import {
+  adjustInventory, cancelOrder, confirmOrder, createOrder, getBranchInventory,
+  getLedger, getOrder, statusName,
+  type InventoryItem, type LedgerEntry, type OrderDto
+} from './api';
 
-type Mode = 'admin' | 'pos';
-type Product = { id: string; name: string; sku: string; category: string; price: number; stock: number; color: string; icon: string };
-type CartLine = Product & { qty: number };
-const money = (n: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(n);
-const productsSeed: Product[] = [
-  { id:'p1',name:'Cà phê sữa đá',sku:'CF-001',category:'Cà phê',price:29000,stock:128,color:'coffee',icon:'☕' },
-  { id:'p2',name:'Bạc xỉu',sku:'CF-002',category:'Cà phê',price:32000,stock:86,color:'latte',icon:'🥤' },
-  { id:'p3',name:'Trà đào cam sả',sku:'TE-001',category:'Trà',price:39000,stock:64,color:'tea',icon:'🍹' },
-  { id:'p4',name:'Trà vải',sku:'TE-002',category:'Trà',price:35000,stock:52,color:'berry',icon:'🧋' },
-  { id:'p5',name:'Matcha latte',sku:'MT-001',category:'Đá xay',price:45000,stock:38,color:'matcha',icon:'🍵' },
-  { id:'p6',name:'Chocolate đá xay',sku:'MT-002',category:'Đá xay',price:49000,stock:9,color:'choco',icon:'🍫' },
-  { id:'p7',name:'Croissant bơ',sku:'BK-001',category:'Bánh',price:28000,stock:24,color:'bread',icon:'🥐' },
-  { id:'p8',name:'Tiramisu',sku:'BK-002',category:'Bánh',price:42000,stock:6,color:'cake',icon:'🍰' }
-];
-const navAdmin = [
-  { title:'TỔNG QUAN', items:[['Tổng quan',LayoutDashboard],['Báo cáo',BarChart3]] },
-  { title:'VẬN HÀNH', items:[['Sản phẩm',Package],['Kho hàng',Boxes],['Đơn hàng',ShoppingBag],['Chi nhánh',Building2]] },
-  { title:'HỆ THỐNG', items:[['Nhân viên & quyền',Users],['Cài đặt',Settings]] }
-] as const;
-const adminTitles: Record<string,string> = { 'Tổng quan':'Tổng quan hoạt động','Báo cáo':'Báo cáo & phân tích','Sản phẩm':'Quản lý sản phẩm','Kho hàng':'Quản lý kho hàng','Đơn hàng':'Quản lý đơn hàng','Chi nhánh':'Quản lý chi nhánh','Nhân viên & quyền':'Nhân viên & phân quyền','Cài đặt':'Cài đặt hệ thống' };
-function App(){
-  const [mode,setMode]=useState<Mode>(()=>location.pathname.startsWith('/pos')?'pos':'admin');
-  const [page,setPage]=useState('Tổng quan'); const [mobileNav,setMobileNav]=useState(false);
-  const [products,setProducts]=useState<Product[]>(productsSeed); const [cart,setCart]=useState<CartLine[]>(()=>{try{return JSON.parse(localStorage.getItem('oism.pos.cart')||'[]')}catch{return []}});
-  const [category,setCategory]=useState('Tất cả'); const [search,setSearch]=useState(''); const [toast,setToast]=useState('');
-  const [payment,setPayment]=useState('Tiền mặt'); const [cash,setCash]=useState(''); const [discount,setDiscount]=useState(0);
-  const [showCheckout,setShowCheckout]=useState(false); const [showAddProduct,setShowAddProduct]=useState(false); const [online,setOnline]=useState(navigator.onLine);
-  const [apiStatus,setApiStatus]=useState<'unknown'|'connected'|'offline'>('unknown'); const [apiNote,setApiNote]=useState('');
-  const [orders,setOrders]=useState([{id:'ORD-1024',customer:'Khách lẻ',date:'17/11/2026 09:42',total:245000,status:'Hoàn tất',channel:'POS'},{id:'ORD-1023',customer:'Nguyễn Minh Anh',date:'17/11/2026 09:18',total:389000,status:'Đang xử lý',channel:'Online'},{id:'ORD-1022',customer:'Khách lẻ',date:'17/11/2026 08:56',total:128000,status:'Hoàn tất',channel:'POS'},{id:'ORD-1021',customer:'Trần Hoàng',date:'16/11/2026 20:31',total:560000,status:'Đã hủy',channel:'Online'}]);
-  const [queryResult,setQueryResult]=useState('');
-  useEffect(()=>{const up=()=>setOnline(true),down=()=>setOnline(false);window.addEventListener('online',up);window.addEventListener('offline',down);return()=>{window.removeEventListener('online',up);window.removeEventListener('offline',down)}},[]);
-  useEffect(()=>{localStorage.setItem('oism.pos.cart',JSON.stringify(cart))},[cart]);
-  useEffect(()=>{if(toast){const t=setTimeout(()=>setToast(''),3500);return()=>clearTimeout(t)}},[toast]);
-  useEffect(()=>{const path=mode==='pos'?'/pos':'/admin'; if(location.pathname!==path)history.replaceState({},'',path)},[mode]);
-  const subtotal=cart.reduce((s,p)=>s+p.price*p.qty,0), total=Math.max(0,subtotal-discount), change=Math.max(0,(Number(cash)||0)-total);
-  const filtered=useMemo(()=>products.filter(p=>(category==='Tất cả'||p.category===category)&&`${p.name} ${p.sku}`.toLowerCase().includes(search.toLowerCase())),[products,category,search]);
-  const categories=['Tất cả',...Array.from(new Set(products.map(p=>p.category)))];
-  function addToCart(p:Product){setCart(old=>{const found=old.find(x=>x.id===p.id);return found?old.map(x=>x.id===p.id?{...x,qty:x.qty+1}:x):[...old,{...p,qty:1}]});setToast(`Đã thêm ${p.name} vào giỏ hàng`)}
-  function updateQty(id:string,delta:number){setCart(old=>old.map(x=>x.id===id?{...x,qty:x.qty+delta}:x).filter(x=>x.qty>0))}
-  async function checkApi(){try{const message=await checkBackend();setApiStatus('connected');setApiNote(`${message || 'Backend đang phản hồi.'} API hiện có: inventory, inventory ledger và orders. Danh mục sản phẩm, đăng nhập và POS checkout chưa có endpoint trong backend hiện tại.`)}catch(e){setApiStatus('offline');setApiNote(e instanceof Error?e.message:'Không thể kết nối API')}}
-  async function login(){setToast('Backend hiện chưa có AuthController hoặc endpoint đăng nhập. Chưa thể xác thực tài khoản từ giao diện.');setShowCheckout(false)}
-  async function loadProducts(){try{const rows=await getBranchInventory();setProducts(current=>{const bySku=new Map(rows.map(row=>[row.sku.toLowerCase(),row]));return current.map(product=>{const row=bySku.get(product.sku.toLowerCase());return row?{...product,id:row.productId,stock:row.available}:product}).concat(rows.filter(row=>!current.some(product=>product.sku.toLowerCase()===row.sku.toLowerCase())).map(row=>({id:row.productId,name:row.name,sku:row.sku,category:'Khác',price:0,stock:row.available,color:'coffee',icon:'📦'})))});setApiStatus('connected');setApiNote(`Đã đồng bộ ${rows.length} dòng tồn kho từ API. Giá bán và danh mục vẫn là dữ liệu giao diện vì backend chưa cung cấp Products API.`);setToast(`Đã tải ${rows.length} dòng tồn kho từ backend.`)}catch(e){setApiStatus('offline');setApiNote(e instanceof Error?e.message:'Không tải được tồn kho');setToast(e instanceof Error?e.message:'Không tải được tồn kho từ API')}}
-  async function checkout(){if(!cart.length)return;setToast('Chưa thể ghi nhận thanh toán: backend hiện chưa có POS checkout endpoint. Giỏ hàng vẫn được giữ trên thiết bị.');}
-  function addProduct(e:React.FormEvent<HTMLFormElement>){e.preventDefault();const d=new FormData(e.currentTarget);const p:Product={id:`p${Date.now()}`,name:String(d.get('name')),sku:String(d.get('sku')),category:String(d.get('category')),price:Number(d.get('price')),stock:Number(d.get('stock')),color:'coffee',icon:'📦'};setProducts(old=>[p,...old]);setShowAddProduct(false);setToast('Đã thêm sản phẩm vào danh mục')}
-  const switchMode=(m:Mode)=>{setMode(m);setMobileNav(false);setPage(m==='admin'?'Tổng quan':'Bán hàng')};
-  return <div className={`app-shell ${mode==='pos'?'pos-shell':''}`}>
-    {mode==='admin'?<>
-      <aside className={`sidebar ${mobileNav?'open':''}`}><div className="brand"><div className="brand-mark"><Store size={21}/></div><div><b>OISM</b><small>RETAIL MANAGEMENT</small></div><button className="icon-btn sidebar-close" onClick={()=>setMobileNav(false)}><X size={18}/></button></div>
-        <div className="tenant-switch"><div className="tenant-logo">M</div><div><b>May Coffee</b><small>Workspace · HCM</small></div><ChevronDown size={15}/></div>
-        {navAdmin.map(group=><div className="nav-group" key={group.title}><div className="nav-label">{group.title}</div>{group.items.map(([label,Icon])=><button key={label} className={`nav-item ${page===label?'active':''}`} onClick={()=>{setPage(label);setMobileNav(false)}}><Icon size={18}/><span>{label}</span>{label==='Kho hàng'&&<i className="nav-count">3</i>}</button>)}</div>)}
-        <div className="sidebar-bottom"><div className="help-card"><div className="help-icon"><CircleHelp size={17}/></div><b>Cần trợ giúp?</b><p>Xem hướng dẫn sử dụng OISM</p><button onClick={()=>setToast('Trung tâm trợ giúp đang được cập nhật')}>Trung tâm trợ giúp <ArrowUpRight size={13}/></button></div><div className="profile-row"><div className="avatar">AD</div><div><b>Admin Nguyễn</b><small>Quản trị viên</small></div><MoreHorizontal size={18}/></div></div>
-      </aside><div className="sidebar-backdrop" onClick={()=>setMobileNav(false)}></div>
-      <main className="main-area"><header className="topbar"><div className="top-left"><button className="icon-btn menu-toggle" onClick={()=>setMobileNav(true)}><Menu/></button><div className="breadcrumb">Workspace <ChevronRight size={14}/> <b>{page}</b></div></div><div className="top-actions"><div className="date-chip"><CalendarDays size={15}/> Thứ Ba, 17/11/2026</div><button className="icon-btn notification" onClick={()=>setToast('Bạn không có thông báo mới')}><Bell size={18}/><i/></button><div className="top-avatar">AD</div></div></header>
-      <div className="page-content"><div className="page-heading"><div><div className="eyebrow">MAY COFFEE <span>•</span> OVERVIEW</div><h1>{adminTitles[page]||page}</h1><p>{page==='Tổng quan'?'Theo dõi tình hình kinh doanh và vận hành cửa hàng của bạn.':`Theo dõi và quản lý ${page.toLowerCase()} trong hệ thống OISM.`}</p></div><div className="heading-actions"><button className="btn btn-outline" onClick={()=>setShowCheckout(true)}>Đăng nhập API</button><button className="btn btn-outline" onClick={checkApi}><RefreshCw size={15}/> Kiểm tra API</button><button className="btn btn-primary" onClick={()=>page==='Sản phẩm'?setShowAddProduct(true):setToast('Đã cập nhật dữ liệu mới nhất')}><Plus size={16}/>{page==='Sản phẩm'?'Thêm sản phẩm':'Xuất báo cáo'}</button></div></div>
-      {page==='Tổng quan'?<Dashboard orders={orders} products={products} setPage={setPage}/>:page==='Sản phẩm'?<ProductsPage products={products} setShowAddProduct={setShowAddProduct}/>:page==='Kho hàng'?<InventoryPage products={products}/>:page==='Đơn hàng'?<OrdersPage orders={orders}/>:page==='Báo cáo'?<ReportsPage/>:page==='Chi nhánh'?<BranchesPage/>:page==='Nhân viên & quyền'?<UsersPage/>:<SettingsPage apiStatus={apiStatus} apiNote={apiNote} checkApi={checkApi}/>}
-      <footer className="app-footer"><span>© 2026 OISM · Omnichannel Inventory & Sales Management</span><span>Version 1.0.0 <i/> Hệ thống hoạt động ổn định</span></footer></div></main>
-    </>:<PosApp products={products} filtered={filtered} categories={categories} category={category} setCategory={setCategory} search={search} setSearch={setSearch} cart={cart} addToCart={addToCart} updateQty={updateQty} subtotal={subtotal} total={total} discount={discount} setDiscount={setDiscount} payment={payment} setPayment={setPayment} cash={cash} setCash={setCash} change={change} checkout={checkout} online={online} setToast={setToast} loadProducts={loadProducts}/>}
-    <div className="mode-switch"><button className={mode==='admin'?'selected':''} onClick={()=>switchMode('admin')}><LayoutDashboard size={14}/> Admin</button><button className={mode==='pos'?'selected':''} onClick={()=>switchMode('pos')}><ShoppingCart size={14}/> POS</button></div>
-    {showAddProduct&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowAddProduct(false)}}><form className="modal" onSubmit={addProduct}><div className="modal-head"><div><h2>Thêm sản phẩm mới</h2><p>Nhập thông tin cơ bản của sản phẩm.</p></div><button type="button" className="icon-btn" onClick={()=>setShowAddProduct(false)}><X/></button></div><div className="form-grid"><label className="field full">Tên sản phẩm<input name="name" required placeholder="VD: Cà phê đen đá"/></label><label className="field">Mã SKU<input name="sku" required placeholder="CF-003"/></label><label className="field">Danh mục<select name="category"><option>Cà phê</option><option>Trà</option><option>Đá xay</option><option>Bánh</option><option>Khác</option></select></label><label className="field">Giá bán (₫)<input name="price" type="number" min="0" required placeholder="35000"/></label><label className="field">Tồn kho<input name="stock" type="number" min="0" required placeholder="50"/></label></div><div className="modal-actions"><button type="button" className="btn btn-outline" onClick={()=>setShowAddProduct(false)}>Hủy</button><button className="btn btn-primary"><Plus size={16}/> Lưu sản phẩm</button></div></form></div>}
-    {showCheckout&&<div className="modal-backdrop"><div className="modal checkout-modal"><div className="modal-head"><div><h2>Tích hợp Backend</h2><p>Trạng thái thực tế theo source code hiện tại.</p></div><button className="icon-btn" onClick={()=>setShowCheckout(false)}><X/></button></div><div className="hint-box"><AlertTriangle size={16}/> Backend hiện có OrdersController và InventoryController, nhưng chưa có AuthController, ProductsController hoặc POS checkout endpoint. Các chức năng tương ứng đang là giao diện nền tảng, không giả lập việc lưu dữ liệu.</div><div className="api-url">API Base URL: {apiBase}</div><div className="modal-actions"><button className="btn btn-outline" onClick={()=>setShowCheckout(false)}>Đóng</button><button className="btn btn-primary" onClick={()=>{setShowCheckout(false);checkApi()}}>Kiểm tra Backend</button></div></div></div>}
-    {toast&&<div className="toast"><CheckCircle2 size={17}/>{toast}<button onClick={()=>setToast('')}><X size={14}/></button></div>}
-  </div>
+type Page = 'dashboard' | 'inventory' | 'products' | 'orders' | 'ledger' | 'reports';
+
+const money = (value: number) => new Intl.NumberFormat('vi-VN', {
+  style: 'currency', currency: 'VND', maximumFractionDigits: 0
+}).format(value);
+
+const dateTime = (value: string) => new Date(value).toLocaleString('vi-VN');
+
+function App() {
+  const [page, setPage] = useState<Page>('dashboard');
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [ledger, setLedger] = useState<LedgerEntry[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [ledgerLoading, setLedgerLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [keyword, setKeyword] = useState('');
+  const [adjustTarget, setAdjustTarget] = useState<InventoryItem | null>(null);
+  const [newOnHand, setNewOnHand] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [orderProduct, setOrderProduct] = useState('');
+  const [orderQty, setOrderQty] = useState('1');
+  const [orderSource, setOrderSource] = useState('POS');
+  const [createdOrder, setCreatedOrder] = useState<OrderDto | null>(null);
+  const [lookupId, setLookupId] = useState('');
+  const [lookedUpOrder, setLookedUpOrder] = useState<OrderDto | null>(null);
+  const [orderBusy, setOrderBusy] = useState(false);
+
+  async function loadInventory() {
+    setLoading(true);
+    setError('');
+    try {
+      const rows = await getBranchInventory();
+      setInventory(Array.isArray(rows) ? rows : []);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Không tải được tồn kho.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadLedger() {
+    setLedgerLoading(true);
+    setError('');
+    try {
+      const rows = await getLedger();
+      setLedger(Array.isArray(rows) ? rows : []);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Không tải được lịch sử kho.');
+    } finally {
+      setLedgerLoading(false);
+    }
+  }
+
+  useEffect(() => { void loadInventory(); }, []);
+
+  const filteredInventory = useMemo(() => {
+    const q = keyword.trim().toLocaleLowerCase('vi');
+    return inventory.filter(x => `${x.sku} ${x.name}`.toLocaleLowerCase('vi').includes(q));
+  }, [inventory, keyword]);
+
+  const totalStock = inventory.reduce((sum, item) => sum + item.onHand, 0);
+  const totalAvailable = inventory.reduce((sum, item) => sum + item.available, 0);
+  const lowStock = inventory.filter(item => item.available <= 5).length;
+
+  const titles: Record<Page, string> = {
+    dashboard: 'Tổng quan', inventory: 'Quản lý tồn kho', products: 'Sản phẩm',
+    orders: 'Đơn hàng', ledger: 'Lịch sử kho', reports: 'Báo cáo'
+  };
+
+  async function saveAdjustment() {
+    if (!adjustTarget) return;
+    const value = Number(newOnHand);
+    if (!Number.isInteger(value) || value < 0) {
+      setError('Tồn kho mới phải là số nguyên không âm.');
+      return;
+    }
+    if (value < adjustTarget.reserved) {
+      setError(`Tồn kho mới không được thấp hơn số lượng đã giữ (${adjustTarget.reserved}).`);
+      return;
+    }
+    setSaving(true); setError(''); setNotice('');
+    try {
+      await adjustInventory(adjustTarget.productId, value);
+      setNotice('Đã cập nhật tồn kho trong cơ sở dữ liệu.');
+      setAdjustTarget(null);
+      await loadInventory();
+      if (page === 'ledger') await loadLedger();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Điều chỉnh tồn kho thất bại.');
+    } finally { setSaving(false); }
+  }
+
+  async function submitOrder() {
+    const qty = Number(orderQty);
+    if (!orderProduct || !Number.isInteger(qty) || qty <= 0) {
+      setError('Hãy chọn sản phẩm và nhập số lượng nguyên lớn hơn 0.');
+      return;
+    }
+    setOrderBusy(true); setError(''); setNotice('');
+    try {
+      const result = await createOrder({ source: orderSource, items: [{ productId: orderProduct, quantity: qty }] });
+      setCreatedOrder(result);
+      setLookedUpOrder(result);
+      setLookupId(result.id);
+      setNotice('Đơn hàng đã được tạo trong cơ sở dữ liệu.');
+      await loadInventory();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Không tạo được đơn hàng.');
+    } finally { setOrderBusy(false); }
+  }
+
+  async function findOrder() {
+    if (!lookupId.trim()) { setError('Nhập Order ID để tra cứu.'); return; }
+    setOrderBusy(true); setError('');
+    try {
+      const result = await getOrder(lookupId.trim());
+      setLookedUpOrder(result);
+    } catch (e) {
+      setLookedUpOrder(null);
+      setError(e instanceof Error ? e.message : 'Không tìm thấy đơn hàng.');
+    } finally { setOrderBusy(false); }
+  }
+
+  async function changeOrderStatus(action: 'confirm' | 'cancel') {
+    if (!lookedUpOrder) return;
+    setOrderBusy(true); setError(''); setNotice('');
+    try {
+      if (action === 'confirm') await confirmOrder(lookedUpOrder.id);
+      else await cancelOrder(lookedUpOrder.id);
+      const refreshed = await getOrder(lookedUpOrder.id);
+      setLookedUpOrder(refreshed);
+      setNotice(action === 'confirm' ? 'Đã xác nhận đơn hàng.' : 'Đã hủy đơn hàng.');
+      await loadInventory();
+      await loadLedger();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Không cập nhật được đơn hàng.');
+    } finally { setOrderBusy(false); }
+  }
+
+  function navigate(next: Page) {
+    setPage(next); setError(''); setNotice('');
+    if (next === 'ledger') void loadLedger();
+    if (next === 'inventory' || next === 'products' || next === 'dashboard') void loadInventory();
+  }
+
+  return (
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="brand">
+          <div className="brand-mark"><Boxes size={25} /></div>
+          <div><strong>OISM</strong><small>INVENTORY & SALES</small></div>
+        </div>
+        <div className="side-label">WORKSPACE</div>
+        <nav className="nav-list">
+          <NavButton active={page === 'dashboard'} onClick={() => navigate('dashboard')} icon={<LayoutDashboard size={18}/>} label="Tổng quan"/>
+          <NavButton active={page === 'inventory'} onClick={() => navigate('inventory')} icon={<Warehouse size={18}/>} label="Tồn kho"/>
+          <NavButton active={page === 'products'} onClick={() => navigate('products')} icon={<Package size={18}/>} label="Sản phẩm"/>
+          <NavButton active={page === 'orders'} onClick={() => navigate('orders')} icon={<ShoppingCart size={18}/>} label="Đơn hàng"/>
+          <NavButton active={page === 'ledger'} onClick={() => navigate('ledger')} icon={<History size={18}/>} label="Lịch sử kho"/>
+          <NavButton active={page === 'reports'} onClick={() => navigate('reports')} icon={<ClipboardList size={18}/>} label="Báo cáo"/>
+        </nav>
+        <div className="sidebar-footer"><span className="online-dot"/> Backend API <small>React + TypeScript</small></div>
+      </aside>
+
+      <main className="main-area">
+        <header className="topbar">
+          <div><span className="eyebrow">OMNICHANNEL INVENTORY SYSTEM</span><h1>{titles[page]}</h1></div>
+          <button className="button secondary" onClick={() => page === 'ledger' ? void loadLedger() : void loadInventory()} disabled={loading || ledgerLoading}>
+            <RefreshCw size={16}/> Làm mới
+          </button>
+        </header>
+
+        <div className="page-content">
+          {error && <div className="alert error"><AlertTriangle size={18}/><span>{error}</span><button onClick={() => setError('')} aria-label="Đóng"><X size={16}/></button></div>}
+          {notice && <div className="alert success"><CheckCircle2 size={18}/><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Đóng"><X size={16}/></button></div>}
+
+          {page === 'dashboard' && <Dashboard inventory={inventory} loading={loading} totalStock={totalStock} totalAvailable={totalAvailable} lowStock={lowStock} onInventory={() => navigate('inventory')} onRefresh={() => void loadInventory()}/>}
+          {page === 'inventory' && <InventoryPage rows={filteredInventory} loading={loading} keyword={keyword} setKeyword={setKeyword} onAdjust={item => {setAdjustTarget(item);setNewOnHand(String(item.onHand));}}/>}
+          {page === 'products' && <ProductsPage rows={filteredInventory} loading={loading} keyword={keyword} setKeyword={setKeyword}/>}
+          {page === 'orders' && <OrdersPage inventory={inventory} orderProduct={orderProduct} setOrderProduct={setOrderProduct} orderQty={orderQty} setOrderQty={setOrderQty} orderSource={orderSource} setOrderSource={setOrderSource} onCreate={() => void submitOrder()} busy={orderBusy} lookupId={lookupId} setLookupId={setLookupId} onFind={() => void findOrder()} order={lookedUpOrder} onConfirm={() => void changeOrderStatus('confirm')} onCancel={() => void changeOrderStatus('cancel')}/>}
+          {page === 'ledger' && <LedgerPage rows={ledger} loading={ledgerLoading}/>}
+          {page === 'reports' && <ReportsPage/>}
+        </div>
+      </main>
+
+      {adjustTarget && <div className="modal-backdrop" onMouseDown={e => {if(e.target === e.currentTarget) setAdjustTarget(null);}}>
+        <div className="modal">
+          <div className="modal-head"><div><span className="eyebrow">INVENTORY ADJUSTMENT</span><h2>Điều chỉnh tồn kho</h2></div><button className="icon-button" onClick={() => setAdjustTarget(null)}><X size={18}/></button></div>
+          <p className="muted">{adjustTarget.sku} · {adjustTarget.name}</p>
+          <label className="field-label">Số lượng tồn kho mới</label>
+          <input className="text-input" type="number" min={adjustTarget.reserved} step="1" value={newOnHand} onChange={e => setNewOnHand(e.target.value)}/>
+          <p className="hint">Đã giữ: {adjustTarget.reserved}. Tồn kho mới không được thấp hơn số lượng đã giữ.</p>
+          <div className="modal-actions"><button className="button secondary" onClick={() => setAdjustTarget(null)}>Hủy</button><button className="button primary" onClick={() => void saveAdjustment()} disabled={saving}>{saving ? 'Đang lưu...' : 'Lưu thay đổi'}</button></div>
+        </div>
+      </div>}
+    </div>
+  );
 }
-function Dashboard({orders,products,setPage}:{orders:any[],products:Product[],setPage:(s:string)=>void}){const low=products.filter(p=>p.stock<15);return <>
-  <div className="stats-grid"><StatCard label="Doanh thu hôm nay" value="24.580.000 ₫" change="12,8%" positive icon={Wallet} tint="blue" note="So với hôm qua"/><StatCard label="Tổng đơn hàng" value="186" change="8,2%" positive icon={ShoppingBag} tint="purple" note="So với hôm qua"/><StatCard label="Sản phẩm đang bán" value={String(products.length).padStart(2,'0')} change="3 mới" positive icon={Package} tint="orange" note="Trong danh mục"/><StatCard label="Nhân viên hoạt động" value="12" change="2 ca" positive icon={Users} tint="green" note="Đang làm việc"/></div>
-  <div className="dashboard-grid"><section className="panel revenue-panel"><div className="panel-head"><div><h3>Doanh thu bán hàng</h3><p>Hiệu suất kinh doanh theo thời gian</p></div><select className="select-small" defaultValue="7 ngày qua"><option>7 ngày qua</option><option>30 ngày qua</option><option>Hôm nay</option></select></div><div className="revenue-summary"><strong>168.420.000 ₫</strong><span className="trend-up"><TrendingUp size={14}/> 18,6%</span><small>Doanh thu trong 7 ngày</small></div><RevenueChart/></section><section className="panel channel-panel"><div className="panel-head"><div><h3>Kênh bán hàng</h3><p>Tỷ trọng doanh thu theo kênh</p></div><button className="icon-btn"><Ellipsis/></button></div><div className="donut-wrap"><div className="donut"><div><b>186</b><small>Đơn hàng</small></div></div></div><div className="legend-list"><div><i className="dot dot-blue"/><span>Tại cửa hàng</span><b>68%</b></div><div><i className="dot dot-purple"/><span>Online</span><b>24%</b></div><div><i className="dot dot-orange"/><span>Đối tác</span><b>8%</b></div></div></section></div>
-  <div className="dashboard-grid lower-grid"><section className="panel"><div className="panel-head"><div><h3>Đơn hàng gần đây</h3><p>Các giao dịch mới nhất trong hệ thống</p></div><button className="text-link" onClick={()=>setPage('Đơn hàng')}>Xem tất cả <ChevronRight size={15}/></button></div><OrdersTable orders={orders.slice(0,4)}/></section><section className="panel stock-panel"><div className="panel-head"><div><h3>Cảnh báo tồn kho</h3><p>Sản phẩm sắp hết hàng</p></div><span className="warning-pill">{low.length} cảnh báo</span></div>{low.length?low.slice(0,4).map(p=><div className="stock-alert" key={p.id}><div className="stock-product"><div className="mini-product">{p.icon}</div><div><b>{p.name}</b><small>{p.sku}</small></div></div><div className="stock-level"><b>{p.stock}</b><small>Còn lại</small></div></div>):<div className="empty-state">Tất cả sản phẩm đang đủ tồn kho.</div>}<button className="text-link stock-link" onClick={()=>setPage('Kho hàng')}>Đi đến quản lý kho <ChevronRight size={15}/></button></section></div>
-  </>}
-function StatCard({label,value,change,positive,icon:Icon,tint,note}:{label:string,value:string,change:string,positive:boolean,icon:any,tint:string,note:string}){return <div className="stat-card"><div className="stat-top"><span>{label}</span><div className={`stat-icon ${tint}`}><Icon size={19}/></div></div><div className="stat-value">{value}</div><div className="stat-bottom"><span className={positive?'trend-up':'trend-down'}>{positive?<TrendingUp size={13}/>:<TrendingDown size={13}/>} {change}</span><small>{note}</small></div></div>}
-function RevenueChart(){const vals=[35,48,40,65,54,78,60,86,72,92,68,82];return <div className="chart-area"><div className="chart-y"><span>30tr</span><span>20tr</span><span>10tr</span><span>0</span></div><div className="chart-content"><div className="chart-gridlines"><i/><i/><i/><i/></div><svg viewBox="0 0 660 190" preserveAspectRatio="none" className="line-chart"><defs><linearGradient id="fillRevenue" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#2563eb" stopOpacity=".18"/><stop offset="1" stopColor="#2563eb" stopOpacity="0"/></linearGradient></defs><path d={`M ${vals.map((v,i)=>`${i*60},${175-v*1.65}`).join(' L ')} L 660,190 L 0,190 Z`} fill="url(#fillRevenue)"/><polyline points={vals.map((v,i)=>`${i*60},${175-v*1.65}`).join(' ')} fill="none" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>{vals.map((v,i)=><circle key={i} cx={i*60} cy={175-v*1.65} r="3.5" fill="white" stroke="#2563eb" strokeWidth="2"/>)}</svg><div className="chart-x"><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span></div></div></div>}
-function OrdersTable({orders}:{orders:any[]}){return <div className="table-wrap"><table><thead><tr><th>MÃ ĐƠN HÀNG</th><th>KHÁCH HÀNG</th><th>THỜI GIAN</th><th>TỔNG TIỀN</th><th>TRẠNG THÁI</th></tr></thead><tbody>{orders.map(o=><tr key={o.id}><td><b className="order-code">{o.id}</b></td><td>{o.customer}</td><td className="muted-cell">{o.date}</td><td><b>{money(o.total)}</b></td><td><span className={`status ${o.status==='Hoàn tất'?'success':o.status==='Đang xử lý'?'pending':'danger'}`}>{o.status}</span></td></tr>)}</tbody></table></div>}
-function ProductsPage({products,setShowAddProduct}:{products:Product[],setShowAddProduct:(v:boolean)=>void}){const [q,setQ]=useState('');return <section className="panel page-panel"><div className="toolbar"><div className="search-box"><Search size={17}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Tìm theo tên sản phẩm, SKU..."/></div><button className="btn btn-outline"><Filter size={15}/> Bộ lọc</button><button className="btn btn-outline"><Download size={15}/> Xuất file</button><button className="btn btn-primary" onClick={()=>setShowAddProduct(true)}><Plus size={16}/> Thêm sản phẩm</button></div><div className="table-wrap"><table><thead><tr><th>SẢN PHẨM</th><th>MÃ SKU</th><th>DANH MỤC</th><th>GIÁ BÁN</th><th>TỒN KHO</th><th>TRẠNG THÁI</th><th></th></tr></thead><tbody>{products.filter(p=>(p.name+p.sku).toLowerCase().includes(q.toLowerCase())).map(p=><tr key={p.id}><td><div className="table-product"><div className="mini-product">{p.icon}</div><b>{p.name}</b></div></td><td className="muted-cell">{p.sku}</td><td>{p.category}</td><td><b>{money(p.price)}</b></td><td><b>{p.stock}</b></td><td><span className={`status ${p.stock<10?'danger':p.stock<20?'pending':'success'}`}>{p.stock<10?'Sắp hết hàng':p.stock<20?'Sắp hết':'Đang bán'}</span></td><td><button className="icon-btn"><MoreHorizontal size={17}/></button></td></tr>)}</tbody></table></div><div className="table-foot">Hiển thị {products.length} sản phẩm <span>Trang 1 / 1 <button className="icon-btn"><ChevronLeft/></button><button className="icon-btn"><ChevronRight/></button></span></div></section>}
-function InventoryPage({products}:{products:Product[]}){return <><div className="stats-grid three-stats"><StatCard label="Tổng SKU" value={String(products.length)} change="Đang quản lý" positive icon={Package} tint="blue" note="Toàn hệ thống"/><StatCard label="Sắp hết hàng" value={String(products.filter(p=>p.stock<15).length)} change="Cần nhập thêm" positive={false} icon={AlertTriangle} tint="orange" note="Ngưỡng cảnh báo 15"/><StatCard label="Tổng tồn kho" value={String(products.reduce((s,p)=>s+p.stock,0))} change="Đơn vị" positive icon={Boxes} tint="green" note="Tổng số lượng"/></div><section className="panel page-panel"><div className="panel-head"><div><h3>Tồn kho theo sản phẩm</h3><p>Theo dõi số lượng tồn hiện tại tại chi nhánh</p></div><button className="btn btn-outline"><ArrowLeftRight size={15}/> Điều chuyển kho</button></div><div className="table-wrap"><table><thead><tr><th>SẢN PHẨM</th><th>SKU</th><th>CHI NHÁNH</th><th>TỒN THỰC TẾ</th><th>NGƯỠNG TỐI THIỂU</th><th>TRẠNG THÁI</th></tr></thead><tbody>{products.map(p=><tr key={p.id}><td><div className="table-product"><div className="mini-product">{p.icon}</div><b>{p.name}</b></div></td><td>{p.sku}</td><td>May Coffee · Q.1</td><td><b>{p.stock}</b></td><td>15</td><td><span className={`status ${p.stock<10?'danger':p.stock<20?'pending':'success'}`}>{p.stock<10?'Sắp hết hàng':p.stock<20?'Cần nhập':'Ổn định'}</span></td></tr>)}</tbody></table></div></section><section className="panel ledger-panel"><div className="panel-head"><div><h3>Nhật ký biến động kho</h3><p>Ledger chỉ ghi nối tiếp, điều chỉnh bằng bút toán bù trừ</p></div><button className="text-link">Xem sổ kho <ChevronRight size={15}/></button></div><div className="ledger-row"><span className="ledger-mark green"><ArrowDownToLine/></span><div><b>Nhập hàng từ nhà cung cấp</b><small>GR-2026-0082 · 17/11/2026 08:30</small></div><strong className="trend-up">+120 đơn vị</strong></div><div className="ledger-row"><span className="ledger-mark blue"><ShoppingBag/></span><div><b>Xuất kho theo đơn bán</b><small>ORD-1024 · 17/11/2026 09:42</small></div><strong className="trend-down">−8 đơn vị</strong></div></section></>}
-function OrdersPage({orders}:{orders:any[]}){return <section className="panel page-panel"><div className="toolbar"><div className="search-box"><Search size={17}/><input placeholder="Tìm mã đơn, khách hàng..."/></div><button className="btn btn-outline"><CalendarDays size={15}/> Khoảng thời gian</button><button className="btn btn-outline"><Filter size={15}/> Trạng thái</button><button className="btn btn-outline"><Download size={15}/> Xuất file</button></div><OrdersTable orders={orders}/><div className="table-foot">Tổng cộng {orders.length} đơn hàng <span>Trang 1 / 1 <button className="icon-btn"><ChevronLeft/></button><button className="icon-btn"><ChevronRight/></button></span></div></section>}
-function ReportsPage(){return <><div className="stats-grid three-stats"><StatCard label="Doanh thu tháng" value="684.250.000 ₫" change="14,2%" positive icon={Wallet} tint="blue" note="So với tháng trước"/><StatCard label="Giá trị đơn trung bình" value="132.500 ₫" change="5,4%" positive icon={Receipt} tint="purple" note="AOV"/><StatCard label="Tỷ lệ hoàn tất" value="96,8%" change="2,1%" positive icon={Activity} tint="green" note="Trên tổng đơn hàng"/></div><div className="dashboard-grid"><section className="panel revenue-panel"><div className="panel-head"><div><h3>Xu hướng doanh thu</h3><p>Thống kê theo ngày trong tháng</p></div><button className="btn btn-outline">Tháng này <ChevronDown size={14}/></button></div><div className="revenue-summary"><strong>684.250.000 ₫</strong><span className="trend-up"><TrendingUp size={14}/> 14,2%</span></div><RevenueChart/></section><section className="panel"><div className="panel-head"><div><h3>Hiệu suất kênh</h3><p>Phân bổ doanh thu</p></div></div><div className="report-bars">{[['Tại cửa hàng',68],['Online',24],['Đối tác',8]].map(([n,v])=><div className="report-bar" key={String(n)}><div><span>{n}</span><b>{v}%</b></div><i><em style={{width:`${v}%`}}/></i></div>)}</div></section></div></>}
-function BranchesPage(){return <section className="panel page-panel"><div className="panel-head"><div><h3>Danh sách chi nhánh</h3><p>Quản lý hoạt động của các cửa hàng trong tenant</p></div><button className="btn btn-primary"><Plus size={16}/> Thêm chi nhánh</button></div>{[['May Coffee · Quận 1','12 Nguyễn Huệ, Quận 1, TP.HCM','Đang hoạt động','08 nhân viên'],['May Coffee · Bình Thạnh','25 Điện Biên Phủ, Bình Thạnh, TP.HCM','Đang hoạt động','04 nhân viên'],['May Coffee · Thủ Đức','18 Võ Văn Ngân, TP. Thủ Đức','Tạm ngưng','—']].map((b,i)=><div className="branch-row" key={b[0]}><div className="branch-icon"><Store/></div><div className="branch-info"><b>{b[0]}</b><small>{b[1]}</small></div><span className={`status ${i===2?'pending':'success'}`}>{b[2]}</span><span className="muted-cell">{b[3]}</span><button className="icon-btn"><MoreHorizontal/></button></div>)}</section>}
-function UsersPage(){return <section className="panel page-panel"><div className="panel-head"><div><h3>Tài khoản nhân viên</h3><p>Phân quyền theo vai trò và phạm vi chi nhánh</p></div><button className="btn btn-primary"><Plus size={16}/> Thêm nhân viên</button></div><div className="table-wrap"><table><thead><tr><th>NHÂN VIÊN</th><th>VAI TRÒ</th><th>CHI NHÁNH</th><th>TRẠNG THÁI</th></tr></thead><tbody>{[['Nguyễn Minh Anh','Quản lý','Quận 1','Đang hoạt động'],['Trần Hoàng','Thu ngân','Bình Thạnh','Đang hoạt động'],['Lê Thu Hà','Kho','Quận 1','Đang hoạt động'],['Phạm Quốc Bảo','Thu ngân','Thủ Đức','Tạm khóa']].map((u,i)=><tr key={u[0]}><td><div className="table-product"><div className="avatar small-avatar">{u[0].split(' ').slice(-2).map(x=>x[0]).join('')}</div><b>{u[0]}</b></div></td><td>{u[1]}</td><td>{u[2]}</td><td><span className={`status ${i===3?'pending':'success'}`}>{u[3]}</span></td></tr>)}</tbody></table></div><div className="hint-box"><AlertTriangle size={16}/> Danh sách minh họa UI. Dữ liệu nhân viên và quyền RBAC cần kết nối API tương ứng.</div></section>}
-function SettingsPage({apiStatus,apiNote,checkApi}:{apiStatus:string,apiNote:string,checkApi:()=>void}){return <div className="settings-grid"><section className="panel settings-panel"><h3>Thông tin doanh nghiệp</h3><p>Cấu hình tenant và thông tin hiển thị trên hóa đơn.</p><label className="field">Tên doanh nghiệp<input defaultValue="May Coffee"/></label><label className="field">Múi giờ<select defaultValue="Asia/Ho_Chi_Minh"><option value="Asia/Ho_Chi_Minh">(GMT+7) Hồ Chí Minh</option></select></label><label className="field">Đơn vị tiền tệ<input defaultValue="VND · Việt Nam Đồng" disabled/></label><button className="btn btn-primary" onClick={()=>alert('Cấu hình mẫu chưa được lưu qua API.')}>Lưu thay đổi</button></section><section className="panel settings-panel"><h3>Kết nối hệ thống</h3><p>Trạng thái API và cấu hình môi trường.</p><div className="connection-row"><span>Backend API</span><span className={`status ${apiStatus==='connected'?'success':apiStatus==='offline'?'danger':'pending'}`}>{apiStatus==='connected'?'Đã kết nối':apiStatus==='offline'?'Chưa kết nối':'Chưa kiểm tra'}</span></div><div className="api-url">{apiBase}</div>{apiNote&&<small className="muted-cell">{apiNote}</small>}<button className="btn btn-outline" onClick={checkApi}><RefreshCw size={15}/> Kiểm tra kết nối</button><div className="hint-box"><AlertTriangle size={16}/> Thiết lập VITE_API_BASE_URL trong file .env để trỏ tới backend của bạn.</div></section></div>}
-function PosApp({products,filtered,categories,category,setCategory,search,setSearch,cart,addToCart,updateQty,subtotal,total,discount,setDiscount,payment,setPayment,cash,setCash,change,checkout,online,setToast,loadProducts}:{products:Product[],filtered:Product[],categories:string[],category:string,setCategory:(s:string)=>void,search:string,setSearch:(s:string)=>void,cart:CartLine[],addToCart:(p:Product)=>void,updateQty:(id:string,d:number)=>void,subtotal:number,total:number,discount:number,setDiscount:(n:number)=>void,payment:string,setPayment:(s:string)=>void,cash:string,setCash:(s:string)=>void,change:number,checkout:()=>void,online:boolean,setToast:(s:string)=>void,loadProducts:()=>void}){
- const [posPage,setPosPage]=useState('Bán hàng');const [cartOpen,setCartOpen]=useState(false);const [scan,setScan]=useState(false);const [customer,setCustomer]=useState('Khách lẻ');const [cashInput,setCashInput]=useState(false);
- const payOptions=[{name:'Tiền mặt',Icon:Banknote},{name:'Chuyển khoản',Icon:ArrowLeftRight},{name:'Thẻ ATM',Icon:CreditCard}];
- return <div className="pos-layout"><aside className="pos-sidebar"><div className="pos-brand"><div className="brand-mark"><ShoppingCart size={20}/></div><div><b>OISM POS</b><small>POINT OF SALE</small></div></div><div className="pos-branch"><div className="branch-icon"><Store size={17}/></div><div><b>May Coffee</b><small>Chi nhánh Quận 1</small></div><ChevronDown size={14}/></div><div className="pos-nav-title">MENU CHÍNH</div>{[['Trang chủ',LayoutDashboard],['Bán hàng',ShoppingCart],['Sản phẩm',Package],['Khách hàng',Users],['Báo cáo',BarChart3],['Đồng bộ dữ liệu',RefreshCw]].map(([n,I]:any)=><button key={n} className={`pos-nav-item ${posPage===n?'active':''}`} onClick={()=>{setPosPage(n);if(n!=='Bán hàng')setToast(`${n}: màn hình đang ở chế độ giao diện nền tảng`)}}><I size={18}/>{n}{n==='Đồng bộ dữ liệu'&&<span className="sync-dot"/>}</button>)}<div className="pos-sidebar-bottom"><div className="shift-card"><div><span>CA LÀM VIỆC</span><b>Ca sáng · 08:00 – 16:00</b></div><Clock3 size={17}/><small>POS-01 · Thu ngân</small></div><div className="profile-row"><div className="avatar">TH</div><div><b>Trần Hoàng</b><small>Thu ngân</small></div><MoreHorizontal size={17}/></div></div></aside>
- <main className="pos-main"><header className="pos-topbar"><div className="pos-title"><div><h1>{posPage==='Bán hàng'?'Bán hàng':posPage}</h1><p>Đơn hàng mới <span>•</span> {new Date().toLocaleDateString('vi-VN')}</p></div></div><div className="pos-top-actions"><span className={`network-pill ${online?'online':'offline'}`}>{online?<Wifi size={14}/>:<WifiOff size={14}/>} {online?'Đang trực tuyến':'Ngoại tuyến'}</span><button className="icon-btn" onClick={loadProducts}><RefreshCw size={17}/></button><button className="icon-btn"><Bell size={17}/></button><div className="top-avatar">TH</div></div></header>
- <div className="pos-workspace"><section className="catalog-area"><div className="catalog-tools"><div className="pos-search"><Search size={18}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Tìm tên sản phẩm hoặc quét mã SKU..."/><button title="Quét mã vạch" onClick={()=>setScan(!scan)}><ScanBarcode size={19}/></button></div><button className="icon-btn filter-btn" onClick={()=>setToast('Bộ lọc nâng cao đang được cập nhật')}><SlidersHorizontal size={18}/></button></div>{scan&&<div className="scan-notice"><ScanBarcode size={18}/> Chế độ nhập mã SKU: nhập mã vào ô tìm kiếm để tìm nhanh sản phẩm. <button onClick={()=>setScan(false)}><X size={15}/></button></div>}<div className="category-row">{categories.map(c=><button key={c} onClick={()=>setCategory(c)} className={category===c?'selected':''}>{c}</button>)}</div><div className="catalog-heading"><div><h3>Danh sách sản phẩm</h3><span>{filtered.length} sản phẩm</span></div><button className="text-link" onClick={()=>setToast('Đang hiển thị toàn bộ sản phẩm')}>Xem tất cả <ChevronRight size={14}/></button></div><div className="pos-product-grid">{filtered.map(p=><article className="pos-product-card" key={p.id}><div className={`product-art ${p.color}`}><span>{p.icon}</span><small>{p.category}</small></div><div className="product-card-info"><div><b>{p.name}</b><small>{p.sku}</small></div><div className="product-card-bottom"><strong>{money(p.price)}</strong><span className={p.stock<10?'stock-low':''}>Kho: {p.stock}</span></div><button className="get-btn" disabled={p.stock<=0} onClick={()=>addToCart(p)}><Plus size={15}/> THÊM</button></div></article>)}</div>{filtered.length===0&&<div className="empty-state">Không tìm thấy sản phẩm phù hợp.</div>}</section>
- <aside className={`cart-panel ${cartOpen?'cart-open':''}`}><div className="cart-header"><div><h3>Đơn hàng hiện tại</h3><span>#{`ORD-${new Date().getTime().toString().slice(-6)}`}</span></div><button className="icon-btn cart-close" onClick={()=>setCartOpen(false)}><X/></button><button className="icon-btn" onClick={()=>{if(confirm('Xóa toàn bộ giỏ hàng?'))cart.forEach(x=>updateQty(x.id,-x.qty))}}><Trash2 size={17}/></button></div><label className="customer-select"><Users size={16}/><select value={customer} onChange={e=>setCustomer(e.target.value)}><option>Khách lẻ</option><option>Khách thành viên</option></select><ChevronDown size={14}/></label><div className="cart-items">{cart.length?cart.map(p=><div className="cart-item" key={p.id}><div className="cart-thumb">{p.icon}</div><div className="cart-item-main"><b>{p.name}</b><small>{money(p.price)}</small><div className="qty-control"><button onClick={()=>updateQty(p.id,-1)}><Minus size={13}/></button><span>{p.qty}</span><button onClick={()=>updateQty(p.id,1)}><Plus size={13}/></button></div></div><strong>{money(p.price*p.qty)}</strong></div>):<div className="cart-empty"><div><ShoppingCart size={27}/></div><b>Chưa có sản phẩm</b><span>Chọn sản phẩm để thêm vào đơn hàng</span></div>}</div><div className="cart-summary"><div className="summary-line"><span>Tạm tính ({cart.reduce((s,p)=>s+p.qty,0)} sản phẩm)</span><b>{money(subtotal)}</b></div><div className="summary-line"><span>Giảm giá</span><button className="discount-btn" onClick={()=>setDiscount(discount?0:10000)}>{discount?`-${money(discount)}`:'Thêm giảm giá'}</button></div><div className="summary-line"><span>Thuế</span><span>Đã bao gồm</span></div><div className="summary-total"><b>Tổng thanh toán</b><strong>{money(total)}</strong></div></div><div className="payment-area"><div className="payment-label">PHƯƠNG THỨC THANH TOÁN</div><div className="payment-options">{payOptions.map(({name,Icon})=><button key={name} className={payment===name?'active':''} onClick={()=>setPayment(name)}><Icon size={17}/><span>{name}</span></button>)}</div>{payment==='Tiền mặt'&&<div className="cash-area"><div className="cash-label"><span>Tiền khách đưa</span><button onClick={()=>setCash('')}>Xóa</button></div><input type="number" value={cash} onChange={e=>setCash(e.target.value)} placeholder="Nhập số tiền khách đưa"/><div className="cash-presets">{[50000,100000,200000,500000].map(n=><button key={n} onClick={()=>setCash(String(n))}>{n/1000}k</button>)}</div>{Number(cash)>0&&<div className="change-row"><span>Tiền thừa trả khách</span><b>{money(change)}</b></div>}</div>}{payment==='Chuyển khoản'&&<div className="qr-hint"><div className="qr-fake">▦</div><span>QR thanh toán sẽ được tạo khi tích hợp cổng thanh toán.</span></div>}<button className="checkout-btn" disabled={!cart.length||(payment==='Tiền mặt'&&Number(cash)>0&&Number(cash)<total)} onClick={checkout}><CreditCard size={18}/> THANH TOÁN <span>{money(total)}</span></button><div className="checkout-note"><CheckCircle2 size={13}/> Giao dịch được xác nhận sau khi API phản hồi</div></div></aside></div><div className="pos-bottom"><span><span className="sync-dot"/> Dữ liệu sản phẩm hiển thị {products.length} SKU</span><span>OISM POS · Phiên bản 1.0.0</span></div></main><button className="mobile-cart-fab" onClick={()=>setCartOpen(true)}><ShoppingCart size={19}/> Giỏ hàng <b>{cart.reduce((s,p)=>s+p.qty,0)}</b><strong>{money(total)}</strong></button></div>
+
+function NavButton({active,onClick,icon,label}:{active:boolean;onClick:()=>void;icon:ReactNode;label:string}) {
+  return <button className={`nav-button ${active?'active':''}`} onClick={onClick}>{icon}<span>{label}</span></button>;
 }
+
+function Dashboard({inventory,loading,totalStock,totalAvailable,lowStock,onInventory,onRefresh}:{inventory:InventoryItem[];loading:boolean;totalStock:number;totalAvailable:number;lowStock:number;onInventory:()=>void;onRefresh:()=>void}) {
+  return <>
+    <section className="welcome-card"><div><span className="eyebrow light">BRANCH OVERVIEW</span><h2>Chào mừng đến với OISM</h2><p>Số liệu được tải trực tiếp từ Backend và PostgreSQL.</p></div><div className="welcome-icon"><Activity size={42}/></div></section>
+    <div className="stats-grid">
+      <StatCard icon={<Package/>} label="Mặt hàng trong kho" value={loading?'…':inventory.length} tone="blue"/>
+      <StatCard icon={<Boxes/>} label="Tổng số lượng tồn" value={loading?'…':totalStock.toLocaleString('vi-VN')} tone="violet"/>
+      <StatCard icon={<ArrowDownUp/>} label="Số lượng có thể bán" value={loading?'…':totalAvailable.toLocaleString('vi-VN')} tone="green"/>
+      <StatCard icon={<AlertTriangle/>} label="Mặt hàng sắp hết" value={loading?'…':lowStock} tone="orange"/>
+    </div>
+    <section className="panel">
+      <div className="panel-heading"><div><h3>Tồn kho gần đây</h3><p>Dữ liệu theo chi nhánh đang cấu hình</p></div><button className="button secondary small" onClick={onInventory}>Xem tồn kho</button></div>
+      {loading ? <Loading/> : <InventoryTable rows={inventory.slice(0,6)}/>}
+    </section>
+    <div className="footer-note"><CheckCircle2 size={16}/> Dữ liệu hiển thị là dữ liệu thật từ API. <button onClick={onRefresh}>Tải lại</button></div>
+  </>;
+}
+
+function StatCard({icon,label,value,tone}:{icon:ReactNode;label:string;value:string|number;tone:string}) {
+  return <div className="stat-card"><div className={`stat-icon ${tone}`}>{icon}</div><div><p>{label}</p><strong>{value}</strong></div></div>;
+}
+
+function InventoryPage({rows,loading,keyword,setKeyword,onAdjust}:{rows:InventoryItem[];loading:boolean;keyword:string;setKeyword:(v:string)=>void;onAdjust:(item:InventoryItem)=>void}) {
+  return <section className="panel">
+    <div className="panel-heading"><div><h3>Danh sách tồn kho</h3><p>Điều chỉnh tồn kho sẽ ghi dữ liệu qua API</p></div><span className="count-pill">{rows.length} mặt hàng</span></div>
+    <SearchBox value={keyword} onChange={setKeyword}/>
+    {loading?<Loading/>:<InventoryTable rows={rows} onAdjust={onAdjust} showAction/>}
+  </section>;
+}
+
+function ProductsPage({rows,loading,keyword,setKeyword}:{rows:InventoryItem[];loading:boolean;keyword:string;setKeyword:(v:string)=>void}) {
+  return <section className="panel"><div className="panel-heading"><div><h3>Sản phẩm</h3><p>Danh sách SKU có phát sinh tồn kho tại chi nhánh</p></div><span className="count-pill">{rows.length} SKU</span></div><SearchBox value={keyword} onChange={setKeyword}/>{loading?<Loading/>:<InventoryTable rows={rows}/>}<p className="hint page-hint">Backend hiện chưa cung cấp API danh mục sản phẩm riêng hoặc tạo/sửa sản phẩm. Danh sách này được lấy từ dữ liệu tồn kho, không tự tạo dữ liệu giả.</p></section>;
+}
+
+function SearchBox({value,onChange}:{value:string;onChange:(v:string)=>void}) {
+  return <div className="search-row"><Search size={18}/><input value={value} onChange={e=>onChange(e.target.value)} placeholder="Tìm theo SKU hoặc tên sản phẩm..."/></div>;
+}
+
+function InventoryTable({rows,onAdjust,showAction=false}:{rows:InventoryItem[];onAdjust?:(item:InventoryItem)=>void;showAction?:boolean}) {
+  if(!rows.length) return <div className="empty-state">Không có dữ liệu tồn kho.</div>;
+  return <div className="table-wrap"><table><thead><tr><th>SKU</th><th>Sản phẩm</th><th>Tồn kho</th><th>Đã giữ</th><th>Có thể bán</th>{showAction&&<th></th>}</tr></thead><tbody>{rows.map((item,index)=><tr key={`${item.productId}-${index}`}><td><span className="sku">{item.sku||'—'}</span></td><td className="product-name">{item.name||'Chưa xác định'}</td><td>{item.onHand}</td><td>{item.reserved}</td><td><span className={`stock-badge ${item.available<=5?'low':''}`}>{item.available}</span></td>{showAction&&<td><button className="text-action" onClick={()=>onAdjust?.(item)}>Điều chỉnh</button></td>}</tr>)}</tbody></table></div>;
+}
+
+function OrdersPage(props:{
+ inventory:InventoryItem[];orderProduct:string;setOrderProduct:(v:string)=>void;orderQty:string;setOrderQty:(v:string)=>void;orderSource:string;setOrderSource:(v:string)=>void;onCreate:()=>void;busy:boolean;lookupId:string;setLookupId:(v:string)=>void;onFind:()=>void;order:OrderDto|null;onConfirm:()=>void;onCancel:()=>void;
+}) {
+ const {inventory,orderProduct,setOrderProduct,orderQty,setOrderQty,orderSource,setOrderSource,onCreate,busy,lookupId,setLookupId,onFind,order,onConfirm,onCancel}=props;
+ const canChange=order?.status===1;
+ return <div className="two-columns">
+  <section className="panel"><div className="panel-heading"><div><h3><Plus size={18}/> Tạo đơn hàng</h3><p>Đơn hàng được tạo qua POST /api/orders</p></div></div>
+   <label className="field-label">Nguồn đơn</label><select className="text-input" value={orderSource} onChange={e=>setOrderSource(e.target.value)}><option value="POS">POS</option><option value="ONLINE">ONLINE</option><option value="MANUAL">MANUAL</option></select>
+   <label className="field-label">Sản phẩm</label><select className="text-input" value={orderProduct} onChange={e=>setOrderProduct(e.target.value)}><option value="">-- Chọn SKU --</option>{inventory.map((p,i)=><option key={`${p.productId}-${i}`} value={p.productId}>{p.sku} - {p.name} (có thể bán: {p.available})</option>)}</select>
+   <label className="field-label">Số lượng</label><input className="text-input" type="number" min="1" step="1" value={orderQty} onChange={e=>setOrderQty(e.target.value)}/>
+   <button className="button primary full" onClick={onCreate} disabled={busy||!inventory.length}><ShoppingCart size={17}/>{busy?'Đang xử lý...':'Tạo đơn hàng'}</button>
+   <p className="hint">Backend sẽ kiểm tra tồn kho và giá bán. Đơn mới ở trạng thái Pending.</p>
+  </section>
+  <section className="panel"><div className="panel-heading"><div><h3><FileText size={18}/> Tra cứu đơn hàng</h3><p>Backend chưa có API liệt kê tất cả đơn hàng</p></div></div>
+   <label className="field-label">Order ID (GUID)</label><div className="lookup-row"><input className="text-input" value={lookupId} onChange={e=>setLookupId(e.target.value)} placeholder="Nhập ID đơn hàng"/><button className="button secondary" onClick={onFind} disabled={busy}>Tra cứu</button></div>
+   {order&&<div className="order-detail"><div className="order-number">{order.orderNumber}</div><span className={`status-pill status-${order.status}`}>{statusName(order.status)}</span><p className="muted">ID: {order.id}</p><p className="muted">Ngày tạo: {dateTime(order.createdAt)}</p><div className="order-lines">{order.items?.map((item,i)=><div key={i}><span>{item.productName} × {item.quantity}</span><strong>{money(item.lineTotal)}</strong></div>)}</div><div className="order-total"><span>Tổng cộng</span><strong>{money(order.totalAmount)}</strong></div>{canChange&&<div className="modal-actions"><button className="button secondary" onClick={onCancel} disabled={busy}>Hủy đơn</button><button className="button primary" onClick={onConfirm} disabled={busy}>Xác nhận đơn</button></div>}</div>}
+  </section>
+ </div>;
+}
+
+function LedgerPage({rows,loading}:{rows:LedgerEntry[];loading:boolean}) {
+ return <section className="panel"><div className="panel-heading"><div><h3>Lịch sử biến động kho</h3><p>GET /api/inventory/ledger · Chi nhánh hiện tại</p></div><span className="count-pill">{rows.length} giao dịch</span></div>{loading?<Loading/>:!rows.length?<div className="empty-state">Chưa có giao dịch kho.</div>:<div className="table-wrap"><table><thead><tr><th>Thời gian</th><th>Loại giao dịch</th><th>Product ID</th><th>Số lượng thay đổi</th><th>Tồn sau giao dịch</th><th>Đã giữ</th><th>Order ID</th></tr></thead><tbody>{rows.map(row=><tr key={row.id}><td>{dateTime(row.createdAt)}</td><td>{row.movementType}</td><td className="id-cell">{row.productId}</td><td>{row.quantity}</td><td>{row.onHandAfter}</td><td>{row.reservedAfter}</td><td className="id-cell">{row.orderId||'—'}</td></tr>)}</tbody></table></div>}</section>;
+}
+
+function ReportsPage() {
+ return <section className="panel empty-feature"><CircleDollarSign size={38}/><h3>Báo cáo chưa khả dụng</h3><p>Backend hiện chưa có endpoint báo cáo doanh thu hoặc thống kê đơn hàng. Màn hình này chưa hiển thị số liệu giả.</p></section>;
+}
+
+function Loading() { return <div className="empty-state"><RefreshCw size={18} className="spin"/> Đang tải dữ liệu...</div>; }
+
 export default App;

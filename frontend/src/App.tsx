@@ -1,1264 +1,434 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  Activity, AlertTriangle, ArrowLeftRight, ArrowUpRight, BarChart3, Bell, Boxes,
-  Building2, CalendarDays, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleHelp,
-  Clock3, CreditCard, Download, Ellipsis, Filter, LayoutDashboard,
-  Menu, Minus, MoreHorizontal, Package, Plus, RefreshCw, Receipt, ScanBarcode, Search, Settings, ShoppingBag,
-  ShoppingCart, SlidersHorizontal, Store, Trash2, TrendingDown, TrendingUp, Users,
-  Wallet, Wifi, WifiOff, X, Banknote
+  LayoutDashboard,
+  Warehouse,
+  Package,
+  ShoppingCart,
+  BarChart3,
+  Search,
+  RefreshCw,
+  Boxes,
+  AlertTriangle,
+  CheckCircle2,
 } from 'lucide-react';
+
 import {
-  apiBase, branchId, checkBackend, getBranchInventory, getLedger, adjustInventory,
-  createOrder, confirmOrder, cancelOrder, getOrder, isGuid, loadOrders, saveOrders,
-  loadPrices, savePrice, statusName, type OrderDto, type LedgerEntry
+  getBranchInventory,
+  type InventoryItem,
 } from './api';
 
-type Mode = 'admin' | 'pos';
-type Product = {
-  id: string;
-  name: string;
-  sku: string;
-  category: string;
-  price: number;
-  onHand: number;
-  reserved: number;
-  available: number;
-  stock: number;
-  color: string;
-  icon: string;
-};
-type CartLine = Product & { qty: number };
+import './styles.css';
 
-const money = (n: number) =>
-  new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(n);
-
-const productsSeed: Product[] = [
-  { id: '1', name: 'Cà phê sữa', sku: 'CF-001', category: 'Cà phê', price: 25000, onHand: 0, reserved: 0, available: 0, stock: 0, color: 'coffee', icon: '☕' },
-  { id: 'p2', name: 'Bạc xỉu', sku: 'CF-002', category: 'Cà phê', price: 32000, onHand: 86, reserved: 0, available: 86, stock: 86, color: 'latte', icon: '🥤' },
-  { id: 'p3', name: 'Trà đào cam sả', sku: 'TE-001', category: 'Trà', price: 39000, onHand: 64, reserved: 0, available: 64, stock: 64, color: 'tea', icon: '🍹' },
-  { id: 'p4', name: 'Trà vải', sku: 'TE-002', category: 'Trà', price: 35000, onHand: 52, reserved: 0, available: 52, stock: 52, color: 'berry', icon: '🧋' },
-  { id: 'p5', name: 'Matcha latte', sku: 'MT-001', category: 'Đá xay', price: 45000, onHand: 38, reserved: 0, available: 38, stock: 38, color: 'matcha', icon: '🍵' },
-  { id: 'p6', name: 'Chocolate đá xay', sku: 'MT-002', category: 'Đá xay', price: 49000, onHand: 9, reserved: 0, available: 9, stock: 9, color: 'choco', icon: '🍫' },
-  { id: 'p7', name: 'Croissant bơ', sku: 'BK-001', category: 'Bánh', price: 28000, onHand: 24, reserved: 0, available: 24, stock: 24, color: 'bread', icon: '🥐' },
-  { id: 'p8', name: 'Tiramisu', sku: 'BK-002', category: 'Bánh', price: 42000, onHand: 6, reserved: 0, available: 6, stock: 6, color: 'cake', icon: '🍰' }
-];
-
-const navAdmin = [
-  { title: 'TỔNG QUAN', items: [['Tổng quan', LayoutDashboard], ['Báo cáo', BarChart3]] },
-  { title: 'VẬN HÀNH', items: [['Sản phẩm', Package], ['Kho hàng', Boxes], ['Đơn hàng', ShoppingBag], ['Chi nhánh', Building2]] },
-  { title: 'HỆ THỐNG', items: [['Nhân viên & quyền', Users], ['Cài đặt', Settings]] }
-] as const;
-
-const adminTitles: Record<string, string> = {
-  'Tổng quan': 'Tổng quan hoạt động',
-  'Báo cáo': 'Báo cáo & phân tích',
-  'Sản phẩm': 'Quản lý sản phẩm',
-  'Kho hàng': 'Quản lý kho hàng',
-  'Đơn hàng': 'Quản lý đơn hàng',
-  'Chi nhánh': 'Quản lý chi nhánh',
-  'Nhân viên & quyền': 'Nhân viên & phân quyền',
-  'Cài đặt': 'Cài đặt hệ thống'
-};
+// Các trang trong ứng dụng
+type Page =
+  | 'dashboard'
+  | 'inventory'
+  | 'products'
+  | 'orders'
+  | 'reports';
 
 function App() {
-  const [mode, setMode] = useState<Mode>(() => (location.pathname.startsWith('/pos') ? 'pos' : 'admin'));
-  const [page, setPage] = useState('Tổng quan');
-  const [mobileNav, setMobileNav] = useState(false);
-  const [products, setProducts] = useState<Product[]>(productsSeed);
-  const [cart, setCart] = useState<CartLine[]>(() => {
-    try {
-      return JSON.parse(localStorage.getItem('oism.pos.cart') || '[]');
-    } catch {
-      return [];
-    }
-  });
-  const [category, setCategory] = useState('Tất cả');
+  const [currentPage, setCurrentPage] =
+    useState<Page>('dashboard');
+
+  const [inventory, setInventory] =
+    useState<InventoryItem[]>([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
   const [search, setSearch] = useState('');
-  const [toast, setToast] = useState('');
-  const [payment, setPayment] = useState('Tiền mặt');
-  const [cash, setCash] = useState('');
-  const [discount, setDiscount] = useState(0);
-  const [showCheckout, setShowCheckout] = useState(false);
-  const [showAddProduct, setShowAddProduct] = useState(false);
-  const [online, setOnline] = useState(navigator.onLine);
-  const [apiStatus, setApiStatus] = useState<'unknown' | 'connected' | 'offline'>('unknown');
-  const [apiNote, setApiNote] = useState('');
-  const [orders, setOrders] = useState<OrderDto[]>(loadOrders);
-  const [ledger, setLedger] = useState<LedgerEntry[]>([]);
-  const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
-    const up = () => setOnline(true);
-    const down = () => setOnline(false);
-    window.addEventListener('online', up);
-    window.addEventListener('offline', down);
-    return () => {
-      window.removeEventListener('online', up);
-      window.removeEventListener('offline', down);
-    };
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('oism.pos.cart', JSON.stringify(cart));
-  }, [cart]);
-
-  useEffect(() => {
-    saveOrders(orders);
-  }, [orders]);
-
-  useEffect(() => {
-    if (toast) {
-      const t = setTimeout(() => setToast(''), 3500);
-      return () => clearTimeout(t);
-    }
-  }, [toast]);
-
-  useEffect(() => {
-    const path = mode === 'pos' ? '/pos' : '/admin';
-    if (location.pathname !== path) history.replaceState({}, '', path);
-  }, [mode]);
-
-  // Tự động gọi API lấy tồn kho và sổ kho ngay khi mở trang
-  useEffect(() => {
-    loadProducts();
-    loadLedger();
-  }, []);
-
-  const subtotal = cart.reduce((s, p) => s + p.price * p.qty, 0);
-  const total = Math.max(0, subtotal - discount);
-  const change = Math.max(0, (Number(cash) || 0) - total);
-
-  const filtered = useMemo(
-    () =>
-      products.filter(
-        p =>
-          (category === 'Tất cả' || p.category === category) &&
-          `${p.name} ${p.sku}`.toLowerCase().includes(search.toLowerCase())
-      ),
-    [products, category, search]
-  );
-
-  const categories = ['Tất cả', ...Array.from(new Set(products.map(p => p.category)))];
-
-  function addToCart(p: Product) {
-    setCart(old => {
-      const found = old.find(x => x.id === p.id);
-      return found
-        ? old.map(x => (x.id === p.id ? { ...x, qty: x.qty + 1 } : x))
-        : [...old, { ...p, qty: 1 }];
-    });
-    setToast(`Đã thêm ${p.name} vào giỏ hàng`);
-  }
-
-  function updateQty(id: string, delta: number) {
-    setCart(old =>
-      old.map(x => (x.id === id ? { ...x, qty: x.qty + delta } : x)).filter(x => x.qty > 0)
-    );
-  }
-
-  async function checkApi() {
+  // Lấy dữ liệu tồn kho từ Backend
+  async function loadInventory() {
     try {
-      const message = await checkBackend();
-      setApiStatus('connected');
-      setApiNote(message);
-      await loadProducts();
-      await loadLedger();
-      setToast('Kết nối Backend thành công!');
-    } catch (e) {
-      setApiStatus('offline');
-      const errorMessage = e instanceof Error ? e.message : 'Không thể kết nối API';
-      setApiNote(errorMessage);
-      setToast(errorMessage);
-    }
-  }
+      setLoading(true);
+      setError('');
 
-  async function loadProducts() {
-    try {
-      const rows = await getBranchInventory();
-      const prices = loadPrices();
+      const data = await getBranchInventory();
 
-      const productsFromApi: Product[] = (rows || []).map((row: any, idx: number) => {
-        const rawSku = row.sku || row.productSku || `SKU-${idx + 1}`;
-        const oldProduct = productsSeed.find(
-          p => p.sku.toLowerCase() === String(rawSku).toLowerCase()
-        );
-        const rawName =
-          row.name || row.productName || oldProduct?.name || `Sản phẩm ${rawSku}`;
-        const onHand = Number(row.onHand ?? 0);
-        const reserved = Number(row.reserved ?? 0);
-        const available = Number(row.available ?? onHand - reserved);
-
-        return {
-          id: String(row.productId || row.id || `p-${idx}`),
-          name: String(rawName),
-          sku: String(rawSku),
-          category: oldProduct?.category ?? 'Khác',
-          price: prices[String(rawSku).toLowerCase()] ?? Number(row.price ?? oldProduct?.price ?? 0),
-          onHand,
-          reserved,
-          available,
-          stock: available,
-          color: oldProduct?.color ?? 'coffee',
-          icon: oldProduct?.icon ?? '📦'
-        };
-      });
-
-      if (productsFromApi.length > 0) {
-        setProducts(productsFromApi);
-      }
-      setApiStatus('connected');
-      setApiNote(`Đã đồng bộ ${productsFromApi.length} sản phẩm từ Backend.`);
-      setToast(`Đã đồng bộ ${productsFromApi.length} sản phẩm từ Backend.`);
-    } catch (e) {
-      setApiStatus('offline');
-      const message = e instanceof Error ? e.message : 'Không tải được tồn kho từ API';
-      setApiNote(message);
-      setToast(message);
-    }
-  }
-
-  async function checkout() {
-    if (!cart.length || busy) return;
-    if (discount > 0) {
-      setToast('Backend chưa hỗ trợ giảm giá nên chưa thể ghi nhận đơn. Hãy bỏ giảm giá rồi thanh toán lại.');
-      return;
-    }
-    if (cart.some(l => !isGuid(l.id))) {
-      setToast('Giỏ có sản phẩm chưa có ProductId thật. Bấm nút đồng bộ (góc trên) rồi thêm lại sản phẩm.');
-      return;
-    }
-    setBusy(true);
-    setToast('Đang tạo đơn...');
-    let created: OrderDto | undefined;
-    try {
-      created = await createOrder({
-        branchId,
-        source: 'POS',
-        items: cart.map(l => ({ productId: l.id, quantity: l.qty }))
-      });
-      await confirmOrder(created.id);
-      const final = await getOrder(created.id);
-      setOrders(old => [final, ...old.filter(o => o.id !== final.id)]);
-      learnPrices(final);
-      setCart([]);
-      setCash('');
-      setDiscount(0);
-      await loadProducts();
-      await loadLedger();
-      setToast(`Đã xác nhận đơn ${final.orderNumber}. Tổng theo server: ${money(final.totalAmount)}`);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Không thể thanh toán';
-      if (created) {
-        const c = created;
-        setOrders(old => [c, ...old.filter(o => o.id !== c.id)]);
-        setToast(`Đơn ${c.orderNumber} đã tạo nhưng chưa xác nhận: ${msg}. Vào Admin > Đơn hàng để xác nhận hoặc hủy.`);
-      } else {
-        setToast(msg);
-      }
+      setInventory(data);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Không thể tải dữ liệu tồn kho'
+      );
     } finally {
-      setBusy(false);
+      setLoading(false);
     }
   }
 
-  function learnPrices(o: OrderDto) {
-    o.items.forEach(i => savePrice(i.sku, i.unitPrice));
-    setProducts(cur =>
-      cur.map(p => {
-        const it = o.items.find(i => i.productId === p.id);
-        return it ? { ...p, price: it.unitPrice } : p;
-      })
+  // Tự động tải dữ liệu khi mở ứng dụng
+  useEffect(() => {
+    loadInventory();
+  }, []);
+
+  // Lọc sản phẩm theo tên hoặc mã SKU
+  const filteredInventory = inventory.filter((item) => {
+    const keyword = search.toLowerCase();
+
+    return (
+      item.name.toLowerCase().includes(keyword) ||
+      item.sku.toLowerCase().includes(keyword)
     );
-  }
+  });
 
-  function editPrice(p: Product) {
-    const v = prompt(`Giá hiển thị của ${p.name} (₫). Giá thật do server tính khi tạo đơn.`, String(p.price));
-    if (v === null) return;
-    const n = Number(v);
-    if (!Number.isFinite(n) || n < 0) {
-      setToast('Giá không hợp lệ');
-      return;
-    }
-    savePrice(p.sku, n);
-    setProducts(cur => cur.map(x => (x.id === p.id ? { ...x, price: n } : x)));
-  }
+  // Tính toán số liệu từ dữ liệu thật
+  const totalProducts = inventory.filter(
+    (item) => item.sku && item.name
+  ).length;
 
-  async function refreshOrders() {
-    try {
-      const fresh = await Promise.all(orders.map(o => getOrder(o.id).catch(() => o)));
-      setOrders(fresh);
-      setToast('Đã làm mới trạng thái đơn từ server');
-    } catch (e) {
-      setToast(e instanceof Error ? e.message : 'Không làm mới được đơn hàng');
-    }
-  }
+  const totalStock = inventory.reduce(
+    (sum, item) => sum + item.onHand,
+    0
+  );
 
-  async function orderAction(o: OrderDto, kind: 'confirm' | 'cancel') {
-    try {
-      await (kind === 'confirm' ? confirmOrder(o.id) : cancelOrder(o.id));
-      const fresh = await getOrder(o.id);
-      setOrders(old => old.map(x => (x.id === o.id ? fresh : x)));
-      setToast(kind === 'confirm' ? `Đã xác nhận ${o.orderNumber}` : `Đã hủy ${o.orderNumber}`);
-      await loadProducts();
-      await loadLedger();
-    } catch (e) {
-      setToast(e instanceof Error ? e.message : 'Thao tác thất bại');
-    }
-  }
+  const lowStock = inventory.filter(
+    (item) => item.onHand <= 5
+  ).length;
 
-  async function loadLedger() {
-    try {
-      setLedger(await getLedger());
-    } catch (e) {
-      setToast(e instanceof Error ? e.message : 'Không tải được sổ kho');
-    }
-  }
-
-  async function adjustStock(p: Product) {
-    if (!isGuid(p.id)) {
-      setToast('Sản phẩm chưa có ProductId thật. Hãy đồng bộ tồn kho từ backend trước.');
-      return;
-    }
-    const v = prompt(`Nhập tồn thực tế (on-hand) mới cho ${p.name}. Khả dụng hiện tại: ${p.stock}`);
-    if (v === null) return;
-    const n = Number(v);
-    if (!Number.isInteger(n) || n < 0) {
-      setToast('Số lượng phải là số nguyên không âm');
-      return;
-    }
-    try {
-      await adjustInventory(p.id, n);
-      setToast(`Đã điều chỉnh ${p.name} → ${n}`);
-      await loadProducts();
-      await loadLedger();
-    } catch (e) {
-      setToast(e instanceof Error ? e.message : 'Điều chỉnh thất bại');
-    }
-  }
-
-  function addProduct(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const d = new FormData(e.currentTarget);
-    const stock = Number(d.get('stock'));
-    const p: Product = {
-      id: `p${Date.now()}`,
-      name: String(d.get('name')),
-      sku: String(d.get('sku')),
-      category: String(d.get('category')),
-      price: Number(d.get('price')),
-      onHand: stock,
-      reserved: 0,
-      available: stock,
-      stock,
-      color: 'coffee',
-      icon: '📦'
-    };
-    setProducts(old => [p, ...old]);
-    setShowAddProduct(false);
-    setToast('Đã thêm sản phẩm vào danh mục');
-  }
-
-  const switchMode = (m: Mode) => {
-    setMode(m);
-    setMobileNav(false);
-    setPage(m === 'admin' ? 'Tổng quan' : 'Bán hàng');
+  // Tiêu đề trang
+  const pageTitles: Record<Page, string> = {
+    dashboard: 'Dashboard',
+    inventory: 'Quản lý tồn kho',
+    products: 'Sản phẩm',
+    orders: 'Đơn hàng',
+    reports: 'Báo cáo',
   };
 
   return (
-    <div className={`app-shell ${mode === 'pos' ? 'pos-shell' : ''}`}>
-      {mode === 'admin' ? (
-        <>
-          <aside className={`sidebar ${mobileNav ? 'open' : ''}`}>
-            <div className="brand">
-              <div className="brand-mark"><Store size={21} /></div>
-              <div><b>OISM</b><small>RETAIL MANAGEMENT</small></div>
-              <button className="icon-btn sidebar-close" onClick={() => setMobileNav(false)}><X size={18} /></button>
-            </div>
-            <div className="tenant-switch">
-              <div className="tenant-logo">M</div>
-              <div><b>May Coffee</b><small>Workspace · HCM</small></div>
-              <ChevronDown size={15} />
-            </div>
-            {navAdmin.map(group => (
-              <div className="nav-group" key={group.title}>
-                <div className="nav-label">{group.title}</div>
-                {group.items.map(([label, Icon]) => (
-                  <button
-                    key={label}
-                    className={`nav-item ${page === label ? 'active' : ''}`}
-                    onClick={() => { setPage(label); setMobileNav(false); }}
-                  >
-                    <Icon size={18} />
-                    <span>{label}</span>
-                    {label === 'Kho hàng' && <i className="nav-count">{products.length}</i>}
-                  </button>
-                ))}
-              </div>
-            ))}
-            <div className="sidebar-bottom">
-              <div className="help-card">
-                <div className="help-icon"><CircleHelp size={17} /></div>
-                <b>Cần trợ giúp?</b>
-                <p>Xem hướng dẫn sử dụng OISM</p>
-                <button onClick={() => setToast('Trung tâm trợ giúp đang được cập nhật')}>
-                  Trung tâm trợ giúp <ArrowUpRight size={13} />
-                </button>
-              </div>
-              <div className="profile-row">
-                <div className="avatar">AD</div>
-                <div><b>Admin Nguyễn</b><small>Quản trị viên</small></div>
-                <MoreHorizontal size={18} />
-              </div>
-            </div>
-          </aside>
-          <div className="sidebar-backdrop" onClick={() => setMobileNav(false)}></div>
-          <main className="main-area">
-            <header className="topbar">
-              <div className="top-left">
-                <button className="icon-btn menu-toggle" onClick={() => setMobileNav(true)}><Menu /></button>
-                <div className="breadcrumb">Workspace <ChevronRight size={14} /> <b>{page}</b></div>
-              </div>
-              <div className="top-actions">
-                <div className="date-chip">
-                  <CalendarDays size={15} />{' '}
-                  {new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}
-                </div>
-                <button className="icon-btn notification" onClick={() => setToast('Bạn không có thông báo mới')}>
-                  <Bell size={18} /><i />
-                </button>
-                <div className="top-avatar">AD</div>
-              </div>
-            </header>
-            <div className="page-content">
-              <div className="page-heading">
-                <div>
-                  <div className="eyebrow">MAY COFFEE <span>•</span> OVERVIEW</div>
-                  <h1>{adminTitles[page] || page}</h1>
-                  <p>
-                    {page === 'Tổng quan'
-                      ? 'Theo dõi tình hình kinh doanh và vận hành cửa hàng của bạn.'
-                      : `Theo dõi và quản lý ${page.toLowerCase()} trong hệ thống OISM.`}
-                  </p>
-                </div>
-                <div className="heading-actions">
-                  <button className="btn btn-outline" onClick={() => setShowCheckout(true)}>Trạng thái API</button>
-                  <button className="btn btn-outline" onClick={checkApi}><RefreshCw size={15} /> Kiểm tra API</button>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => (page === 'Sản phẩm' ? setShowAddProduct(true) : checkApi())}
-                  >
-                    <Plus size={16} />{page === 'Sản phẩm' ? 'Thêm sản phẩm' : 'Đồng bộ ngay'}
-                  </button>
-                </div>
-              </div>
+    <div className="app">
 
-              {page === 'Tổng quan' ? (
-                <Dashboard orders={orders} products={products} setPage={setPage} />
-              ) : page === 'Sản phẩm' ? (
-                <ProductsPage products={products} setShowAddProduct={setShowAddProduct} editPrice={editPrice} />
-              ) : page === 'Kho hàng' ? (
-                <InventoryPage products={products} ledger={ledger} loadLedger={loadLedger} adjust={adjustStock} reload={loadProducts} />
-              ) : page === 'Đơn hàng' ? (
-                <OrdersPage orders={orders} refresh={refreshOrders} onConfirm={o => orderAction(o, 'confirm')} onCancel={o => orderAction(o, 'cancel')} />
-              ) : page === 'Báo cáo' ? (
-                <ReportsPage />
-              ) : page === 'Chi nhánh' ? (
-                <BranchesPage />
-              ) : page === 'Nhân viên & quyền' ? (
-                <UsersPage />
-              ) : (
-                <SettingsPage apiStatus={apiStatus} apiNote={apiNote} checkApi={checkApi} />
-              )}
+      {/* SIDEBAR */}
+      <aside className="sidebar">
 
-              <footer className="app-footer">
-                <span>© 2026 OISM · Omnichannel Inventory & Sales Management</span>
-                <span>
-                  Version 1.0.0 <i /> {apiStatus === 'connected' ? 'Đã kết nối C# Backend' : 'Đang chờ kết nối Backend'}
-                </span>
-              </footer>
-            </div>
-          </main>
-        </>
-      ) : (
-        <PosApp
-          products={products}
-          filtered={filtered}
-          categories={categories}
-          category={category}
-          setCategory={setCategory}
-          search={search}
-          setSearch={setSearch}
-          cart={cart}
-          addToCart={addToCart}
-          updateQty={updateQty}
-          subtotal={subtotal}
-          total={total}
-          discount={discount}
-          setDiscount={setDiscount}
-          payment={payment}
-          setPayment={setPayment}
-          cash={cash}
-          setCash={setCash}
-          change={change}
-          checkout={checkout}
-          online={online}
-          setToast={setToast}
-          loadProducts={loadProducts}
-        />
-      )}
-
-      <div className="mode-switch">
-        <button className={mode === 'admin' ? 'selected' : ''} onClick={() => switchMode('admin')}>
-          <LayoutDashboard size={14} /> Admin
-        </button>
-        <button className={mode === 'pos' ? 'selected' : ''} onClick={() => switchMode('pos')}>
-          <ShoppingCart size={14} /> POS
-        </button>
-      </div>
-
-      {showAddProduct && (
-        <div className="modal-backdrop" onMouseDown={e => { if (e.target === e.currentTarget) setShowAddProduct(false); }}>
-          <form className="modal" onSubmit={addProduct}>
-            <div className="modal-head">
-              <div><h2>Thêm sản phẩm mới</h2><p>Nhập thông tin cơ bản của sản phẩm.</p></div>
-              <button type="button" className="icon-btn" onClick={() => setShowAddProduct(false)}><X /></button>
-            </div>
-            <div className="form-grid">
-              <label className="field full">Tên sản phẩm<input name="name" required placeholder="VD: Cà phê đen đá" /></label>
-              <label className="field">Mã SKU<input name="sku" required placeholder="CF-003" /></label>
-              <label className="field">
-                Danh mục
-                <select name="category">
-                  <option>Cà phê</option><option>Trà</option><option>Đá xay</option><option>Bánh</option><option>Khác</option>
-                </select>
-              </label>
-              <label className="field">Giá bán (₫)<input name="price" type="number" min="0" required placeholder="35000" /></label>
-              <label className="field">Tồn kho<input name="stock" type="number" min="0" required placeholder="50" /></label>
-            </div>
-            <div className="modal-actions">
-              <button type="button" className="btn btn-outline" onClick={() => setShowAddProduct(false)}>Hủy</button>
-              <button className="btn btn-primary"><Plus size={16} /> Lưu sản phẩm</button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {showCheckout && (
-        <div className="modal-backdrop">
-          <div className="modal checkout-modal">
-            <div className="modal-head">
-              <div><h2>Tích hợp Backend</h2><p>Trạng thái thực tế theo source code hiện tại.</p></div>
-              <button className="icon-btn" onClick={() => setShowCheckout(false)}><X /></button>
-            </div>
-            <div className="hint-box">
-              <AlertTriangle size={16} /> Backend hiện có OrdersController, InventoryController và InventoryLedgerController.
-            </div>
-            <div className="api-url">API Base URL: {apiBase}</div>
-            {apiNote && <p style={{ marginTop: 8 }}>{apiNote}</p>}
-            <div className="modal-actions">
-              <button className="btn btn-outline" onClick={() => setShowCheckout(false)}>Đóng</button>
-              <button className="btn btn-primary" onClick={() => { setShowCheckout(false); checkApi(); }}>Kiểm tra Backend</button>
-            </div>
+        <div className="brand">
+          <div className="brand-icon">
+            <Boxes size={24} />
           </div>
-        </div>
-      )}
 
-      {toast && (
-        <div className="toast">
-          <CheckCircle2 size={17} />{toast}
-          <button onClick={() => setToast('')}><X size={14} /></button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Dashboard({ orders, products, setPage }: { orders: any[]; products: Product[]; setPage: (s: string) => void }) {
-  const low = products.filter(p => p.stock < 15);
-  return (
-    <>
-      <div className="stats-grid">
-        <StatCard label="Doanh thu hôm nay" value="24.580.000 ₫" change="12,8%" positive icon={Wallet} tint="blue" note="So với hôm qua" />
-        <StatCard label="Tổng đơn hàng" value={String(orders.length || 186)} change="8,2%" positive icon={ShoppingBag} tint="purple" note="So với hôm qua" />
-        <StatCard label="Sản phẩm đang bán" value={String(products.length).padStart(2, '0')} change="Đã đồng bộ" positive icon={Package} tint="orange" note="Trong danh mục" />
-        <StatCard label="Tổng tồn khả dụng" value={String(products.reduce((s, p) => s + p.available, 0))} change="Đơn vị" positive icon={Boxes} tint="green" note="Chi nhánh hiện tại" />
-      </div>
-      <div className="dashboard-grid">
-        <section className="panel revenue-panel">
-          <div className="panel-head">
-            <div><h3>Doanh thu bán hàng</h3><p>Hiệu suất kinh doanh theo thời gian</p></div>
-            <select className="select-small" defaultValue="7 ngày qua">
-              <option>7 ngày qua</option><option>30 ngày qua</option><option>Hôm nay</option>
-            </select>
-          </div>
-          <div className="revenue-summary">
-            <strong>168.420.000 ₫</strong>
-            <span className="trend-up"><TrendingUp size={14} /> 18,6%</span>
-            <small>Doanh thu trong 7 ngày</small>
-          </div>
-          <RevenueChart />
-        </section>
-        <section className="panel channel-panel">
-          <div className="panel-head">
-            <div><h3>Kênh bán hàng</h3><p>Tỷ trọng doanh thu theo kênh</p></div>
-            <button className="icon-btn"><Ellipsis /></button>
-          </div>
-          <div className="donut-wrap"><div className="donut"><div><b>186</b><small>Đơn hàng</small></div></div></div>
-          <div className="legend-list">
-            <div><i className="dot dot-blue" /><span>Tại cửa hàng</span><b>68%</b></div>
-            <div><i className="dot dot-purple" /><span>Online</span><b>24%</b></div>
-            <div><i className="dot dot-orange" /><span>Đối tác</span><b>8%</b></div>
-          </div>
-        </section>
-      </div>
-      <div className="dashboard-grid lower-grid">
-        <section className="panel">
-          <div className="panel-head">
-            <div><h3>Đơn hàng gần đây</h3><p>Các giao dịch mới nhất trong hệ thống</p></div>
-            <button className="text-link" onClick={() => setPage('Đơn hàng')}>Xem tất cả <ChevronRight size={15} /></button>
-          </div>
-          <OrdersTable orders={orders.slice(0, 4)} />
-        </section>
-        <section className="panel stock-panel">
-          <div className="panel-head">
-            <div><h3>Cảnh báo tồn kho</h3><p>Sản phẩm sắp hết hàng</p></div>
-            <span className="warning-pill">{low.length} cảnh báo</span>
-          </div>
-          {low.length ? (
-            low.slice(0, 4).map(p => (
-              <div className="stock-alert" key={p.id}>
-                <div className="stock-product">
-                  <div className="mini-product">{p.icon}</div>
-                  <div><b>{p.name}</b><small>{p.sku}</small></div>
-                </div>
-                <div className="stock-level"><b>{p.stock}</b><small>Còn lại</small></div>
-              </div>
-            ))
-          ) : (
-            <div className="empty-state">Tất cả sản phẩm đang đủ tồn kho.</div>
-          )}
-          <button className="text-link stock-link" onClick={() => setPage('Kho hàng')}>
-            Đi đến quản lý kho <ChevronRight size={15} />
-          </button>
-        </section>
-      </div>
-    </>
-  );
-}
-
-function StatCard({ label, value, change, positive, icon: Icon, tint, note }: { label: string; value: string; change: string; positive: boolean; icon: any; tint: string; note: string }) {
-  return (
-    <div className="stat-card">
-      <div className="stat-top"><span>{label}</span><div className={`stat-icon ${tint}`}><Icon size={19} /></div></div>
-      <div className="stat-value">{value}</div>
-      <div className="stat-bottom">
-        <span className={positive ? 'trend-up' : 'trend-down'}>
-          {positive ? <TrendingUp size={13} /> : <TrendingDown size={13} />} {change}
-        </span>
-        <small>{note}</small>
-      </div>
-    </div>
-  );
-}
-
-function RevenueChart() {
-  const vals = [35, 48, 40, 65, 54, 78, 60, 86, 72, 92, 68, 82];
-  return (
-    <div className="chart-area">
-      <div className="chart-y"><span>30tr</span><span>20tr</span><span>10tr</span><span>0</span></div>
-      <div className="chart-content">
-        <div className="chart-gridlines"><i /><i /><i /><i /></div>
-        <svg viewBox="0 0 660 190" preserveAspectRatio="none" className="line-chart">
-          <defs>
-            <linearGradient id="fillRevenue" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stopColor="#2563eb" stopOpacity=".18" />
-              <stop offset="1" stopColor="#2563eb" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path d={`M ${vals.map((v, i) => `${i * 60},${175 - v * 1.65}`).join(' L ')} L 660,190 L 0,190 Z`} fill="url(#fillRevenue)" />
-          <polyline points={vals.map((v, i) => `${i * 60},${175 - v * 1.65}`).join(' ')} fill="none" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          {vals.map((v, i) => <circle key={i} cx={i * 60} cy={175 - v * 1.65} r="3.5" fill="white" stroke="#2563eb" strokeWidth="2" />)}
-        </svg>
-        <div className="chart-x"><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span></div>
-      </div>
-    </div>
-  );
-}
-
-function OrdersTable({ orders, onConfirm, onCancel }: { orders: OrderDto[]; onConfirm?: (o: OrderDto) => void; onCancel?: (o: OrderDto) => void }) {
-  const label: Record<string, string> = { Draft: 'Nháp', Pending: 'Chờ xác nhận', Confirmed: 'Đã xác nhận', Cancelled: 'Đã hủy', Rejected: 'Bị từ chối' };
-  const cls = (s: string) => (s === 'Confirmed' ? 'success' : s === 'Pending' || s === 'Draft' ? 'pending' : 'danger');
-  if (!orders.length) return <div className="empty-state">Chưa có đơn nào trên thiết bị này. Đơn tạo từ POS sẽ hiện ở đây.</div>;
-  return (
-    <div className="table-wrap">
-      <table>
-        <thead>
-          <tr><th>MÃ ĐƠN HÀNG</th><th>KÊNH</th><th>THỜI GIAN</th><th>TỔNG TIỀN</th><th>TRẠNG THÁI</th>{onConfirm && <th></th>}</tr>
-        </thead>
-        <tbody>
-          {orders.map(o => {
-            const s = statusName(o.status);
-            return (
-              <tr key={o.id}>
-                <td><b className="order-code">{o.orderNumber}</b></td>
-                <td>{o.source}</td>
-                <td className="muted-cell">{new Date(o.createdAt).toLocaleString('vi-VN')}</td>
-                <td><b>{money(o.totalAmount)}</b></td>
-                <td><span className={`status ${cls(s)}`}>{label[s] ?? s}</span></td>
-                {onConfirm && (
-                  <td>
-                    {s === 'Pending' && (
-                      <div className="row-actions">
-                        <button className="btn btn-primary" onClick={() => onConfirm(o)}>Xác nhận</button>
-                        <button className="btn btn-outline" onClick={() => onCancel?.(o)}>Hủy</button>
-                      </div>
-                    )}
-                  </td>
-                )}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function ProductsPage({ products, setShowAddProduct, editPrice }: { products: Product[]; setShowAddProduct: (v: boolean) => void; editPrice: (p: Product) => void }) {
-  const [q, setQ] = useState('');
-  return (
-    <section className="panel page-panel">
-      <div className="toolbar">
-        <div className="search-box">
-          <Search size={17} />
-          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Tìm theo tên sản phẩm, SKU..." />
-        </div>
-        <button className="btn btn-outline"><Filter size={15} /> Bộ lọc</button>
-        <button className="btn btn-outline"><Download size={15} /> Xuất file</button>
-        <button className="btn btn-primary" onClick={() => setShowAddProduct(true)}><Plus size={16} /> Thêm sản phẩm</button>
-      </div>
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr><th>SẢN PHẨM</th><th>MÃ SKU</th><th>DANH MỤC</th><th>GIÁ BÁN</th><th>TỒN KHO</th><th>TRẠNG THÁI</th><th></th></tr>
-          </thead>
-          <tbody>
-            {products
-              .filter(p => (p.name + p.sku).toLowerCase().includes(q.toLowerCase()))
-              .map(p => (
-                <tr key={p.id}>
-                  <td><div className="table-product"><div className="mini-product">{p.icon}</div><b>{p.name}</b></div></td>
-                  <td className="muted-cell">{p.sku}</td>
-                  <td>{p.category}</td>
-                  <td>
-                    <button className="price-btn" title="Sửa giá hiển thị" onClick={() => editPrice(p)}>
-                      {p.price ? money(p.price) : 'Đặt giá'}
-                    </button>
-                  </td>
-                  <td><b>{p.stock}</b></td>
-                  <td>
-                    <span className={`status ${p.stock < 10 ? 'danger' : p.stock < 20 ? 'pending' : 'success'}`}>
-                      {p.stock < 10 ? 'Sắp hết hàng' : p.stock < 20 ? 'Sắp hết' : 'Đang bán'}
-                    </span>
-                  </td>
-                  <td><button className="icon-btn"><MoreHorizontal size={17} /></button></td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="table-foot">
-        Hiển thị {products.length} sản phẩm{' '}
-        <span>Trang 1 / 1 <button className="icon-btn"><ChevronLeft /></button><button className="icon-btn"><ChevronRight /></button></span>
-      </div>
-    </section>
-  );
-}
-
-function InventoryPage({
-  products,
-  ledger,
-  loadLedger,
-  adjust,
-  reload
-}: {
-  products: Product[];
-  ledger: LedgerEntry[];
-  loadLedger: () => void;
-  adjust: (p: Product) => void;
-  reload: () => void;
-}) {
-  const mv: Record<string, string> = {
-    Reservation: 'Giữ hàng',
-    Sale: 'Xuất bán',
-    Release: 'Hoàn giữ hàng',
-    Adjustment: 'Điều chỉnh tồn'
-  };
-
-  const rows = [...ledger]
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .slice(0, 30);
-
-  return (
-    <>
-      <div className="stats-grid three-stats">
-        <StatCard label="Tổng SKU" value={String(products.length)} change="Đang quản lý" positive icon={Package} tint="blue" note="Chi nhánh hiện tại" />
-        <StatCard label="Sắp hết hàng" value={String(products.filter(p => p.available < 15).length)} change="Cần nhập thêm" positive={false} icon={AlertTriangle} tint="orange" note="Ngưỡng cảnh báo 15" />
-        <StatCard label="Tổng khả dụng" value={String(products.reduce((s, p) => s + p.available, 0))} change="Đơn vị" positive icon={Boxes} tint="green" note="On-hand − đã giữ" />
-      </div>
-
-      <section className="panel page-panel">
-        <div className="panel-head">
           <div>
-            <h3>Tồn kho theo sản phẩm</h3>
-            <p>Số liệu từ GET /api/inventory/all của chi nhánh cấu hình trong .env</p>
+            <h2>OISM</h2>
+            <span>INVENTORY SYSTEM</span>
           </div>
-          <button className="btn btn-outline" onClick={reload}>
-            <RefreshCw size={15} /> Đồng bộ tồn kho
-          </button>
         </div>
 
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr><th>SẢN PHẨM</th><th>SKU</th><th>TỒN THỰC TẾ</th><th>ĐÃ GIỮ</th><th>KHẢ DỤNG</th><th>TRẠNG THÁI</th><th></th></tr>
-            </thead>
-            <tbody>
-              {products.map(p => (
-                <tr key={p.id}>
-                  <td><div className="table-product"><div className="mini-product">{p.icon}</div><b>{p.name}</b></div></td>
-                  <td>{p.sku}</td>
-                  <td>{p.onHand}</td>
-                  <td>{p.reserved}</td>
-                  <td><b>{p.available}</b></td>
-                  <td>
-                    <span className={`status ${p.available < 10 ? 'danger' : p.available < 20 ? 'pending' : 'success'}`}>
-                      {p.available < 10 ? 'Sắp hết hàng' : p.available < 20 ? 'Cần nhập' : 'Ổn định'}
-                    </span>
-                  </td>
-                  <td><button className="btn btn-outline" onClick={() => adjust(p)}>Điều chỉnh</button></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+        <p className="menu-title">MENU</p>
 
-      <section className="panel ledger-panel">
-        <div className="panel-head">
-          <div>
-            <h3>Nhật ký biến động kho</h3>
-            <p>Ledger chỉ ghi nối tiếp, điều chỉnh bằng bút toán bù trừ</p>
-          </div>
-          <button className="btn btn-outline" onClick={loadLedger}>
-            <RefreshCw size={15} /> Tải sổ kho
-          </button>
-        </div>
+        <nav className="navigation">
 
-        {rows.length ? (
-          rows.map(l => (
-            <div className="ledger-row" key={l.id}>
-              <span className={`ledger-mark ${l.movementType === 'Release' ? 'green' : 'blue'}`}>
-                <ArrowLeftRight />
-              </span>
-              <div>
-                <b>
-                  {mv[l.movementType] ?? l.movementType}
-                  {' · '}
-                  {products.find(p => p.id === l.productId)?.name ?? l.productId.slice(0, 8)}
-                </b>
-                <small>
-                  {l.orderId ? `Đơn ${l.orderId.slice(0, 8)} · ` : ''}
-                  {new Date(l.createdAt).toLocaleString('vi-VN')}
-                  {' · '}
-                  tồn sau: {l.onHandAfter}, đã giữ: {l.reservedAfter}
-                </small>
-              </div>
-              <strong>{l.quantity} đơn vị</strong>
-            </div>
-          ))
-        ) : (
-          <div className="empty-state">Chưa có biến động kho hoặc đang tải từ backend.</div>
-        )}
-      </section>
-    </>
-  );
-}
-
-function OrdersPage({ orders, refresh, onConfirm, onCancel }: { orders: OrderDto[]; refresh: () => void; onConfirm: (o: OrderDto) => void; onCancel: (o: OrderDto) => void }) {
-  return (
-    <section className="panel page-panel">
-      <div className="toolbar">
-        <button className="btn btn-outline" onClick={refresh}><RefreshCw size={15} /> Làm mới từ server</button>
-        <span className="muted-cell">Backend chưa có API danh sách đơn: trang này theo dõi các đơn tạo trên thiết bị này.</span>
-      </div>
-      <OrdersTable orders={orders} onConfirm={onConfirm} onCancel={onCancel} />
-      <div className="table-foot">Tổng cộng {orders.length} đơn hàng</div>
-    </section>
-  );
-}
-
-function ReportsPage() {
-  return (
-    <>
-      <div className="stats-grid three-stats">
-        <StatCard label="Doanh thu tháng" value="684.250.000 ₫" change="14,2%" positive icon={Wallet} tint="blue" note="So với tháng trước" />
-        <StatCard label="Giá trị đơn trung bình" value="132.500 ₫" change="5,4%" positive icon={Receipt} tint="purple" note="AOV" />
-        <StatCard label="Tỷ lệ hoàn tất" value="96,8%" change="2,1%" positive icon={Activity} tint="green" note="Trên tổng đơn hàng" />
-      </div>
-      <div className="dashboard-grid">
-        <section className="panel revenue-panel">
-          <div className="panel-head">
-            <div><h3>Xu hướng doanh thu</h3><p>Thống kê theo ngày trong tháng</p></div>
-            <button className="btn btn-outline">Tháng này <ChevronDown size={14} /></button>
-          </div>
-          <div className="revenue-summary">
-            <strong>684.250.000 ₫</strong>
-            <span className="trend-up"><TrendingUp size={14} /> 14,2%</span>
-          </div>
-          <RevenueChart />
-        </section>
-        <section className="panel">
-          <div className="panel-head"><div><h3>Hiệu suất kênh</h3><p>Phân bổ doanh thu</p></div></div>
-          <div className="report-bars">
-            {[['Tại cửa hàng', 68], ['Online', 24], ['Đối tác', 8]].map(([n, v]) => (
-              <div className="report-bar" key={String(n)}>
-                <div><span>{n}</span><b>{v}%</b></div>
-                <i><em style={{ width: `${v}%` }} /></i>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-    </>
-  );
-}
-
-function BranchesPage() {
-  return (
-    <section className="panel page-panel">
-      <div className="panel-head">
-        <div><h3>Danh sách chi nhánh</h3><p>Quản lý hoạt động của các cửa hàng trong tenant</p></div>
-        <button className="btn btn-primary"><Plus size={16} /> Thêm chi nhánh</button>
-      </div>
-      {[
-        ['May Coffee · Quận 1', '12 Nguyễn Huệ, Quận 1, TP.HCM', 'Đang hoạt động', '08 nhân viên'],
-        ['May Coffee · Bình Thạnh', '25 Điện Biên Phủ, Bình Thạnh, TP.HCM', 'Đang hoạt động', '04 nhân viên'],
-        ['May Coffee · Thủ Đức', '18 Võ Văn Ngân, TP. Thủ Đức', 'Tạm ngưng', '—']
-      ].map((b, i) => (
-        <div className="branch-row" key={b[0]}>
-          <div className="branch-icon"><Store /></div>
-          <div className="branch-info"><b>{b[0]}</b><small>{b[1]}</small></div>
-          <span className={`status ${i === 2 ? 'pending' : 'success'}`}>{b[2]}</span>
-          <span className="muted-cell">{b[3]}</span>
-          <button className="icon-btn"><MoreHorizontal /></button>
-        </div>
-      ))}
-    </section>
-  );
-}
-
-function UsersPage() {
-  return (
-    <section className="panel page-panel">
-      <div className="panel-head">
-        <div><h3>Tài khoản nhân viên</h3><p>Phân quyền theo vai trò và phạm vi chi nhánh</p></div>
-        <button className="btn btn-primary"><Plus size={16} /> Thêm nhân viên</button>
-      </div>
-      <div className="table-wrap">
-        <table>
-          <thead><tr><th>NHÂN VIÊN</th><th>VAI TRÒ</th><th>CHI NHÁNH</th><th>TRẠNG THÁI</th></tr></thead>
-          <tbody>
-            {[
-              ['Nguyễn Minh Anh', 'Quản lý', 'Quận 1', 'Đang hoạt động'],
-              ['Trần Hoàng', 'Thu ngân', 'Bình Thạnh', 'Đang hoạt động'],
-              ['Lê Thu Hà', 'Kho', 'Quận 1', 'Đang hoạt động'],
-              ['Phạm Quốc Bảo', 'Thu ngân', 'Thủ Đức', 'Tạm khóa']
-            ].map((u, i) => (
-              <tr key={u[0]}>
-                <td>
-                  <div className="table-product">
-                    <div className="avatar small-avatar">{u[0].split(' ').slice(-2).map(x => x[0]).join('')}</div>
-                    <b>{u[0]}</b>
-                  </div>
-                </td>
-                <td>{u[1]}</td>
-                <td>{u[2]}</td>
-                <td><span className={`status ${i === 3 ? 'pending' : 'success'}`}>{u[3]}</span></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="hint-box"><AlertTriangle size={16} /> Danh sách minh họa UI. Dữ liệu nhân viên và quyền RBAC cần kết nối API tương ứng.</div>
-    </section>
-  );
-}
-
-function SettingsPage({ apiStatus, apiNote, checkApi }: { apiStatus: string; apiNote: string; checkApi: () => void }) {
-  return (
-    <div className="settings-grid">
-      <section className="panel settings-panel">
-        <h3>Thông tin doanh nghiệp</h3>
-        <p>Cấu hình tenant và thông tin hiển thị trên hóa đơn.</p>
-        <label className="field">Tên doanh nghiệp<input defaultValue="May Coffee" /></label>
-        <label className="field">
-          Múi giờ
-          <select defaultValue="Asia/Ho_Chi_Minh">
-            <option value="Asia/Ho_Chi_Minh">(GMT+7) Hồ Chí Minh</option>
-          </select>
-        </label>
-        <label className="field">Đơn vị tiền tệ<input defaultValue="VND · Việt Nam Đồng" disabled /></label>
-        <button className="btn btn-primary" onClick={() => alert('Cấu hình mẫu chưa được lưu qua API.')}>Lưu thay đổi</button>
-      </section>
-      <section className="panel settings-panel">
-        <h3>Kết nối hệ thống</h3>
-        <p>Trạng thái API và cấu hình môi trường.</p>
-        <div className="connection-row">
-          <span>Backend API</span>
-          <span className={`status ${apiStatus === 'connected' ? 'success' : apiStatus === 'offline' ? 'danger' : 'pending'}`}>
-            {apiStatus === 'connected' ? 'Đã kết nối' : apiStatus === 'offline' ? 'Chưa kết nối' : 'Chưa kiểm tra'}
-          </span>
-        </div>
-        <div className="api-url">{apiBase}</div>
-        {apiNote && <small className="muted-cell">{apiNote}</small>}
-        <button className="btn btn-outline" onClick={checkApi}><RefreshCw size={15} /> Kiểm tra kết nối</button>
-        <div className="hint-box"><AlertTriangle size={16} /> Thiết lập VITE_API_BASE_URL trong file .env để trỏ tới backend của bạn.</div>
-      </section>
-    </div>
-  );
-}
-
-function PosApp({
-  products, filtered, categories, category, setCategory, search, setSearch,
-  cart, addToCart, updateQty, subtotal, total, discount, setDiscount,
-  payment, setPayment, cash, setCash, change, checkout, online, setToast, loadProducts
-}: {
-  products: Product[]; filtered: Product[]; categories: string[]; category: string; setCategory: (s: string) => void;
-  search: string; setSearch: (s: string) => void; cart: CartLine[]; addToCart: (p: Product) => void;
-  updateQty: (id: string, d: number) => void; subtotal: number; total: number; discount: number; setDiscount: (n: number) => void;
-  payment: string; setPayment: (s: string) => void; cash: string; setCash: (s: string) => void; change: number;
-  checkout: () => void; online: boolean; setToast: (s: string) => void; loadProducts: () => void;
-}) {
-  const [posPage, setPosPage] = useState('Bán hàng');
-  const [cartOpen, setCartOpen] = useState(false);
-  const [scan, setScan] = useState(false);
-  const [customer, setCustomer] = useState('Khách lẻ');
-  const payOptions = [
-    { name: 'Tiền mặt', Icon: Banknote },
-    { name: 'Chuyển khoản', Icon: ArrowLeftRight },
-    { name: 'Thẻ ATM', Icon: CreditCard }
-  ];
-
-  return (
-    <div className="pos-layout">
-      <aside className="pos-sidebar">
-        <div className="pos-brand">
-          <div className="brand-mark"><ShoppingCart size={20} /></div>
-          <div><b>OISM POS</b><small>POINT OF SALE</small></div>
-        </div>
-        <div className="pos-branch">
-          <div className="branch-icon"><Store size={17} /></div>
-          <div><b>May Coffee</b><small>Chi nhánh Quận 1</small></div>
-          <ChevronDown size={14} />
-        </div>
-        <div className="pos-nav-title">MENU CHÍNH</div>
-        {[
-          ['Trang chủ', LayoutDashboard],
-          ['Bán hàng', ShoppingCart],
-          ['Sản phẩm', Package],
-          ['Khách hàng', Users],
-          ['Báo cáo', BarChart3],
-          ['Đồng bộ dữ liệu', RefreshCw]
-        ].map(([n, I]: any) => (
           <button
-            key={n}
-            className={`pos-nav-item ${posPage === n ? 'active' : ''}`}
-            onClick={() => {
-              setPosPage(n);
-              if (n === 'Đồng bộ dữ liệu') loadProducts();
-              else if (n !== 'Bán hàng') setToast(`${n}: màn hình đang ở chế độ giao diện nền tảng`);
-            }}
+            className={
+              currentPage === 'dashboard'
+                ? 'nav-item active'
+                : 'nav-item'
+            }
+            onClick={() => setCurrentPage('dashboard')}
           >
-            <I size={18} />{n}{n === 'Đồng bộ dữ liệu' && <span className="sync-dot" />}
+            <LayoutDashboard size={19} />
+            Dashboard
           </button>
-        ))}
-        <div className="pos-sidebar-bottom">
-          <div className="shift-card">
-            <div><span>CA LÀM VIỆC</span><b>Ca sáng · 08:00 – 16:00</b></div>
-            <Clock3 size={17} /><small>POS-01 · Thu ngân</small>
-          </div>
-          <div className="profile-row">
-            <div className="avatar">TH</div>
-            <div><b>Trần Hoàng</b><small>Thu ngân</small></div>
-            <MoreHorizontal size={17} />
-          </div>
+
+          <button
+            className={
+              currentPage === 'inventory'
+                ? 'nav-item active'
+                : 'nav-item'
+            }
+            onClick={() => setCurrentPage('inventory')}
+          >
+            <Warehouse size={19} />
+            Inventory
+          </button>
+
+          <button
+            className={
+              currentPage === 'products'
+                ? 'nav-item active'
+                : 'nav-item'
+            }
+            onClick={() => setCurrentPage('products')}
+          >
+            <Package size={19} />
+            Products
+          </button>
+
+          <button
+            className={
+              currentPage === 'orders'
+                ? 'nav-item active'
+                : 'nav-item'
+            }
+            onClick={() => setCurrentPage('orders')}
+          >
+            <ShoppingCart size={19} />
+            Orders
+          </button>
+
+          <button
+            className={
+              currentPage === 'reports'
+                ? 'nav-item active'
+                : 'nav-item'
+            }
+            onClick={() => setCurrentPage('reports')}
+          >
+            <BarChart3 size={19} />
+            Reports
+          </button>
+
+        </nav>
+
+        <div className="sidebar-bottom">
+          <span>OISM Project</span>
+          <small>React + TypeScript</small>
         </div>
+
       </aside>
 
-      <main className="pos-main">
-        <header className="pos-topbar">
-          <div className="pos-title">
-            <div>
-              <h1>{posPage === 'Bán hàng' ? 'Bán hàng' : posPage}</h1>
-              <p>Đơn hàng mới <span>•</span> {new Date().toLocaleDateString('vi-VN')}</p>
-            </div>
+      {/* MAIN CONTENT */}
+      <main className="main">
+
+        <header className="header">
+          <div>
+            <h2>{pageTitles[currentPage]}</h2>
+            <p>Omnichannel Inventory and Sales Management</p>
           </div>
-          <div className="pos-top-actions">
-            <span className={`network-pill ${online ? 'online' : 'offline'}`}>
-              {online ? <Wifi size={14} /> : <WifiOff size={14} />} {online ? 'Đang trực tuyến' : 'Ngoại tuyến'}
-            </span>
-            <button className="icon-btn" onClick={loadProducts} title="Đồng bộ từ Backend"><RefreshCw size={17} /></button>
-            <button className="icon-btn"><Bell size={17} /></button>
-            <div className="top-avatar">TH</div>
-          </div>
+
+          <button
+            className="refresh-button"
+            onClick={loadInventory}
+            disabled={loading}
+          >
+            <RefreshCw size={17} />
+            Làm mới
+          </button>
         </header>
 
-        <div className="pos-workspace">
-          <section className="catalog-area">
-            <div className="catalog-tools">
-              <div className="pos-search">
-                <Search size={18} />
-                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Tìm tên sản phẩm hoặc quét mã SKU..." />
-                <button title="Quét mã vạch" onClick={() => setScan(!scan)}><ScanBarcode size={19} /></button>
-              </div>
-              <button className="icon-btn filter-btn" onClick={() => setToast('Bộ lọc nâng cao đang được cập nhật')}>
-                <SlidersHorizontal size={18} />
-              </button>
+        <section className="content">
+
+          {/* HIỂN THỊ LỖI */}
+          {error && (
+            <div className="error-message">
+              <AlertTriangle size={18} />
+              {error}
             </div>
-            {scan && (
-              <div className="scan-notice">
-                <ScanBarcode size={18} /> Chế độ nhập mã SKU: nhập mã vào ô tìm kiếm để tìm nhanh sản phẩm.
-                <button onClick={() => setScan(false)}><X size={15} /></button>
+          )}
+
+          {/* DASHBOARD */}
+          {currentPage === 'dashboard' && (
+            <>
+              <div className="welcome">
+                <h1>Tổng quan hệ thống</h1>
+                <p>
+                  Theo dõi tình trạng tồn kho của chi nhánh.
+                </p>
+              </div>
+
+              {loading ? (
+                <p>Đang tải dữ liệu...</p>
+              ) : (
+                <div className="stats-grid">
+
+                  <div className="stat-card">
+                    <div className="stat-icon blue">
+                      <Package size={22} />
+                    </div>
+
+                    <p>Tổng sản phẩm</p>
+                    <h2>{totalProducts}</h2>
+                  </div>
+
+                  <div className="stat-card">
+                    <div className="stat-icon green">
+                      <Boxes size={22} />
+                    </div>
+
+                    <p>Tổng tồn kho</p>
+                    <h2>{totalStock}</h2>
+                  </div>
+
+                  <div className="stat-card">
+                    <div className="stat-icon orange">
+                      <AlertTriangle size={22} />
+                    </div>
+
+                    <p>Sản phẩm tồn thấp</p>
+                    <h2>{lowStock}</h2>
+                  </div>
+
+                </div>
+              )}
+
+              <div className="panel">
+                <div className="panel-heading">
+                  <div>
+                    <h3>Tình trạng kết nối</h3>
+                    <p>Trạng thái dữ liệu từ Backend</p>
+                  </div>
+
+                  {error ? (
+                    <span className="connection-error">
+                      Chưa kết nối
+                    </span>
+                  ) : loading ? (
+                    <span>Đang kiểm tra...</span>
+                  ) : (
+                    <span className="connection-success">
+                      <CheckCircle2 size={16} />
+                      Đã kết nối
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="panel">
+                <div className="panel-heading">
+                  <h3>Sản phẩm tồn kho</h3>
+
+                  <button
+                    className="text-button"
+                    onClick={() => setCurrentPage('inventory')}
+                  >
+                    Xem tất cả
+                  </button>
+                </div>
+
+                <InventoryTable
+                  items={inventory.slice(0, 5)}
+                  loading={loading}
+                />
+              </div>
+            </>
+          )}
+
+          {/* INVENTORY */}
+          {currentPage === 'inventory' && (
+            <>
+              <div className="welcome">
+                <h1>Quản lý tồn kho</h1>
+                <p>
+                  Danh sách tồn kho được lấy từ Backend.
+                </p>
+              </div>
+
+              <div className="panel">
+
+                <div className="toolbar">
+                  <div className="search-box">
+                    <Search size={18} />
+
+                    <input
+                      type="text"
+                      placeholder="Tìm theo tên hoặc SKU..."
+                      value={search}
+                      onChange={(e) =>
+                        setSearch(e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <span>
+                    {filteredInventory.length} dòng dữ liệu
+                  </span>
+                </div>
+
+                <InventoryTable
+                  items={filteredInventory}
+                  loading={loading}
+                />
+
+              </div>
+            </>
+          )}
+
+          {/* CÁC TRANG CHƯA TRIỂN KHAI */}
+          {currentPage !== 'dashboard' &&
+            currentPage !== 'inventory' && (
+              <div className="panel coming-soon">
+                <Package size={40} />
+
+                <h2>{pageTitles[currentPage]}</h2>
+
+                <p>
+                  Chức năng này sẽ được triển khai ở bước tiếp theo.
+                </p>
               </div>
             )}
-            <div className="category-row">
-              {categories.map(c => (
-                <button key={c} onClick={() => setCategory(c)} className={category === c ? 'selected' : ''}>{c}</button>
-              ))}
-            </div>
-            <div className="catalog-heading">
-              <div><h3>Danh sách sản phẩm</h3><span>{filtered.length} sản phẩm</span></div>
-              <button className="text-link" onClick={() => setCategory('Tất cả')}>Xem tất cả <ChevronRight size={14} /></button>
-            </div>
-            <div className="pos-product-grid">
-              {filtered.map(p => (
-                <article className="pos-product-card" key={p.id}>
-                  <div className={`product-art ${p.color}`}><span>{p.icon}</span><small>{p.category}</small></div>
-                  <div className="product-card-info">
-                    <div><b>{p.name}</b><small>{p.sku}</small></div>
-                    <div className="product-card-bottom">
-                      <strong>{p.price ? money(p.price) : 'Chưa có giá'}</strong>
-                      <span className={p.stock < 10 ? 'stock-low' : ''}>Kho: {p.stock}</span>
-                    </div>
-                    <button className="get-btn" disabled={p.stock <= 0} onClick={() => addToCart(p)}>
-                      <Plus size={15} /> THÊM
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-            {filtered.length === 0 && <div className="empty-state">Không tìm thấy sản phẩm phù hợp.</div>}
-          </section>
 
-          <aside className={`cart-panel ${cartOpen ? 'cart-open' : ''}`}>
-            <div className="cart-header">
-              <div><h3>Đơn hàng hiện tại</h3><span>#{`ORD-${new Date().getTime().toString().slice(-6)}`}</span></div>
-              <button className="icon-btn cart-close" onClick={() => setCartOpen(false)}><X /></button>
-              <button className="icon-btn" onClick={() => { if (confirm('Xóa toàn bộ giỏ hàng?')) cart.forEach(x => updateQty(x.id, -x.qty)); }}>
-                <Trash2 size={17} />
-              </button>
-            </div>
-            <label className="customer-select">
-              <Users size={16} />
-              <select value={customer} onChange={e => setCustomer(e.target.value)}>
-                <option>Khách lẻ</option><option>Khách thành viên</option>
-              </select>
-              <ChevronDown size={14} />
-            </label>
-            <div className="cart-items">
-              {cart.length ? (
-                cart.map(p => (
-                  <div className="cart-item" key={p.id}>
-                    <div className="cart-thumb">{p.icon}</div>
-                    <div className="cart-item-main">
-                      <b>{p.name}</b>
-                      <small>{money(p.price)}</small>
-                      <div className="qty-control">
-                        <button onClick={() => updateQty(p.id, -1)}><Minus size={13} /></button>
-                        <span>{p.qty}</span>
-                        <button onClick={() => updateQty(p.id, 1)}><Plus size={13} /></button>
-                      </div>
-                    </div>
-                    <strong>{money(p.price * p.qty)}</strong>
-                  </div>
-                ))
-              ) : (
-                <div className="cart-empty">
-                  <div><ShoppingCart size={27} /></div>
-                  <b>Chưa có sản phẩm</b>
-                  <span>Chọn sản phẩm để thêm vào đơn hàng</span>
-                </div>
-              )}
-            </div>
-            <div className="cart-summary">
-              <div className="summary-line"><span>Tạm tính ({cart.reduce((s, p) => s + p.qty, 0)} sản phẩm)</span><b>{money(subtotal)}</b></div>
-              <div className="summary-line">
-                <span>Giảm giá</span>
-                <button className="discount-btn" onClick={() => setDiscount(discount ? 0 : 10000)}>
-                  {discount ? `-${money(discount)}` : 'Thêm giảm giá'}
-                </button>
-              </div>
-              <div className="summary-line"><span>Thuế</span><span>Đã bao gồm</span></div>
-              <div className="summary-total"><b>Tổng thanh toán</b><strong>{money(total)}</strong></div>
-            </div>
-            <div className="payment-area">
-              <div className="payment-label">PHƯƠNG THỨC THANH TOÁN</div>
-              <div className="payment-options">
-                {payOptions.map(({ name, Icon }) => (
-                  <button key={name} className={payment === name ? 'active' : ''} onClick={() => setPayment(name)}>
-                    <Icon size={17} /><span>{name}</span>
-                  </button>
-                ))}
-              </div>
-              {payment === 'Tiền mặt' && (
-                <div className="cash-area">
-                  <div className="cash-label"><span>Tiền khách đưa</span><button onClick={() => setCash('')}>Xóa</button></div>
-                  <input type="number" value={cash} onChange={e => setCash(e.target.value)} placeholder="Nhập số tiền khách đưa" />
-                  <div className="cash-presets">
-                    {[50000, 100000, 200000, 500000].map(n => (
-                      <button key={n} onClick={() => setCash(String(n))}>{n / 1000}k</button>
-                    ))}
-                  </div>
-                  {Number(cash) > 0 && <div className="change-row"><span>Tiền thừa trả khách</span><b>{money(change)}</b></div>}
-                </div>
-              )}
-              {payment === 'Chuyển khoản' && (
-                <div className="qr-hint">
-                  <div className="qr-fake">▦</div>
-                  <span>QR thanh toán sẽ được tạo khi tích hợp cổng thanh toán.</span>
-                </div>
-              )}
-              <button
-                className="checkout-btn"
-                disabled={!cart.length || (payment === 'Tiền mặt' && Number(cash) > 0 && Number(cash) < total)}
-                onClick={checkout}
-              >
-                <CreditCard size={18} /> THANH TOÁN <span>{money(total)}</span>
-              </button>
-              <div className="checkout-note"><CheckCircle2 size={13} /> Giao dịch được xác nhận sau khi API phản hồi</div>
-            </div>
-          </aside>
-        </div>
+        </section>
 
-        <div className="pos-bottom">
-          <span><span className="sync-dot" /> Dữ liệu sản phẩm hiển thị {products.length} SKU</span>
-          <span>OISM POS · Phiên bản 1.0.0</span>
-        </div>
       </main>
 
-      <button className="mobile-cart-fab" onClick={() => setCartOpen(true)}>
-        <ShoppingCart size={19} /> Giỏ hàng <b>{cart.reduce((s, p) => s + p.qty, 0)}</b><strong>{money(total)}</strong>
-      </button>
+    </div>
+  );
+}
+
+// Component hiển thị bảng tồn kho
+type InventoryTableProps = {
+  items: InventoryItem[];
+  loading: boolean;
+};
+
+function InventoryTable({
+  items,
+  loading,
+}: InventoryTableProps) {
+
+  if (loading) {
+    return <p className="empty">Đang tải dữ liệu...</p>;
+  }
+
+  if (items.length === 0) {
+    return <p className="empty">Không có dữ liệu.</p>;
+  }
+
+  return (
+    <div className="table-container">
+
+      <table>
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Tên sản phẩm</th>
+            <th>Tồn kho</th>
+            <th>Đã giữ</th>
+            <th>Có thể bán</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {items.map((item) => (
+            <tr key={item.productId}>
+
+              <td>
+                <strong>{item.sku || 'N/A'}</strong>
+              </td>
+
+              <td>{item.name || 'Chưa xác định'}</td>
+
+              <td>{item.onHand}</td>
+
+              <td>{item.reserved}</td>
+
+              <td>
+                <span
+                  className={
+                    item.available <= 5
+                      ? 'stock-low'
+                      : 'stock-normal'
+                  }
+                >
+                  {item.available}
+                </span>
+              </td>
+
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
     </div>
   );
 }

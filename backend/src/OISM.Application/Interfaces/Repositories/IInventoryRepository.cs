@@ -1,5 +1,6 @@
 
 using OISM.Domain.Entities;
+using OISM.Application.DTOs.Inventory;
 
 namespace OISM.Application.Interfaces.Repositories;
 
@@ -17,7 +18,7 @@ public interface IInventoryRepository
         Guid productId,
         CancellationToken cancellationToken = default);
 
-    Task<List<Inventory>> GetAllByBranchAsync(
+    Task<List<InventoryListResponse>> GetAllByBranchAsync(
         Guid tenantId,
         Guid branchId,
         CancellationToken cancellationToken = default);

@@ -44,14 +44,25 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 export async function checkBackend(): Promise<string> {
-  const response = await fetch(`${API_BASE}/`, { headers: buildHeaders() });
-  const text = await response.text();
-  if (!response.ok) throw new Error(`Backend trả về HTTP ${response.status}`);
-  // Nếu proxy sai, Vite trả index.html (HTTP 200) -> không được coi là đã kết nối.
-  if (/<html/i.test(text) || !/OISM/i.test(text)) {
-    throw new Error('/backend không trỏ tới OISM backend (nhận về HTML). Kiểm tra proxy trong vite.config.ts và backend ở http://localhost:5185.');
+  const response = await fetch(
+    `${API_BASE}/api/inventory/all?branchId=${encodeURIComponent(branchId)}`,
+    {
+      method: 'GET',
+      headers: buildHeaders()
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Backend trả về HTTP ${response.status}`);
   }
-  return text;
+
+  const rows = await response.json();
+
+  if (!Array.isArray(rows)) {
+    throw new Error('Dữ liệu API không đúng định dạng.');
+  }
+
+  return `Kết nối thành công! Nhận được ${rows.length} dòng tồn kho.`;
 }
 
 /* ---------- Inventory ---------- */

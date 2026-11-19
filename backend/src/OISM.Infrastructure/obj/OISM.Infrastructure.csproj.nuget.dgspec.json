@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj": {}
+    "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj": {}
   },
   "projects": {
-    "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj": {
+    "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj",
+        "projectUniqueName": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj",
         "projectName": "OISM.Application",
-        "projectPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj",
-        "packagesPath": "C:\\Users\\trith\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\obj\\",
+        "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj",
+        "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\trith\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -24,11 +24,10 @@
         },
         "frameworks": {
           "net8.0": {
-            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj": {
-                "projectPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj"
+              "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj": {
+                "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj"
               }
             }
           }
@@ -42,12 +41,10 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.400"
+        }
       },
       "frameworks": {
         "net8.0": {
-          "framework": "net8.0",
           "targetAlias": "net8.0",
           "imports": [
             "net461",
@@ -60,40 +57,26 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.34, 8.0.34]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.34, 8.0.34]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.34, 8.0.34]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.404/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.427/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj": {
+    "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj",
         "projectName": "OISM.Domain",
-        "projectPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj",
-        "packagesPath": "C:\\Users\\trith\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\obj\\",
+        "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj",
+        "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\trith\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -103,7 +86,6 @@
         },
         "frameworks": {
           "net8.0": {
-            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {}
           }
@@ -117,12 +99,10 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.400"
+        }
       },
       "frameworks": {
         "net8.0": {
-          "framework": "net8.0",
           "targetAlias": "net8.0",
           "imports": [
             "net461",
@@ -135,40 +115,26 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.34, 8.0.34]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.34, 8.0.34]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.34, 8.0.34]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.404/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.427/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj": {
+    "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj",
         "projectName": "OISM.Infrastructure",
-        "projectPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\trith\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\OISM.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\trith\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -178,14 +144,13 @@
         },
         "frameworks": {
           "net8.0": {
-            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj": {
-                "projectPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj"
+              "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj": {
+                "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Application\\OISM.Application.csproj"
               },
-              "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj": {
-                "projectPath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj"
+              "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj": {
+                "projectPath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj"
               }
             }
           }
@@ -199,12 +164,10 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.400"
+        }
       },
       "frameworks": {
         "net8.0": {
-          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.EntityFrameworkCore.Design": {
@@ -229,26 +192,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.34, 8.0.34]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.34, 8.0.34]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.34, 8.0.34]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.404/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.427/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

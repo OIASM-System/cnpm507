@@ -1,12 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3Z/hiBd0pGU=",
+  "dgSpecHash": "d4A0oY1WRBc=",
   "success": true,
-  "projectFilePath": "C:\\Users\\trith\\OneDrive\\Tài liệu\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\trith\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.34\\microsoft.netcore.app.ref.8.0.34.nupkg.sha512",
-    "C:\\Users\\trith\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.34\\microsoft.windowsdesktop.app.ref.8.0.34.nupkg.sha512",
-    "C:\\Users\\trith\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.34\\microsoft.aspnetcore.app.ref.8.0.34.nupkg.sha512"
-  ],
+  "projectFilePath": "C:\\Users\\HP\\OneDrive\\Documents\\GitHub\\cnpm507\\backend\\src\\OISM.Domain\\OISM.Domain.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }

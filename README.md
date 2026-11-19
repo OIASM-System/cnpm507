@@ -23,7 +23,7 @@ OISM (Omnichannel Inventory and Sales Management System) là hệ thống quản
 | 13 | [EP13](./EP13/) | Lập kế hoạch, theo dõi và quản lý dự án | 🟢 Hoàn thành |
 | 14 | [14-ai-reordering](./14-ai-reordering/) | Ứng dụng AI trong dự đoán nhu cầu và đề xuất nhập hàng | 🟢 Hoàn thành |
 | 15 | [backend](./backend/) | Xây dựng API, xử lý nghiệp vụ và kết nối cơ sở dữ liệu | 🟢 Hoàn thành |
-| 16 | [frontend](./frontend/) | Phát triển giao diện người dùng và tích hợp với Backend | 🟡 Đang thực hiện |
+| 16 | [frontend](./frontend/) | Phát triển giao diện người dùng và tích hợp với Backend | 🟢 Hoàn thành |
 | 17 | [assets](./assets/) | Lưu trữ hình ảnh, tài nguyên và các dữ liệu hỗ trợ dự án | 🟢 Hoàn thành |
 
 ## 3. Chú thích trạng thái

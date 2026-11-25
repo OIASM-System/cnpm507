@@ -18,19 +18,12 @@ phẩm khi thao tác trên giao diện quản lý tồn kho OISM.
   Nhóm sản phẩm SP        `00000000-0000-0000-0000-000000000001`   `00000000-0000-0000-0000-000000000001`
   ---------------------------------------------------------------------------------------------------------
 
-**Lưu ý:** Các giá trị trên được ghi lại theo thứ tự hai cột định danh
-cuối trong dữ liệu được cung cấp. Nếu hệ thống của bạn xuất thứ tự cột
-khác, hãy đối chiếu tên cột `TenantId` và `BranchId` trong PostgreSQL
-trước khi sử dụng.
+
 
 ### ProductID
 
   SKU      Tên sản phẩm     ProductID
   -------- ---------------- ----------------------------------------
-  BK-001   Croissant bơ     `937c1433-3d4e-41cf-9a16-2d8553156c7b`
-  TE-001   Trà đào cam sả   `adc9a6c1-5d57-4faa-82ac-423b6caae460`
-  CF-002   Bạc xỉu          `851b47ed-fb56-44ce-8928-5c3412ed8fbe`
-  CF-001   Cà phê sữa đá    `436db638-c4b8-4203-ada3-044dde843032`
   SP001    Coca             `25d00b0f-a91f-4542-a375-7a1a57cf70ea`
   SP002    7Up              `91e8ce07-6905-4810-a375-284e713ee32d`
   SP003    Sprite           `aacf2496-10e3-4530-9e81-e59d8581a8fa`

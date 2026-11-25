@@ -8,6 +8,9 @@ public class Inventory
     public Guid BranchId { get; private set; }
     public Guid ProductId { get; private set; }
 
+    // Navigation property liên kết Product
+    public Product? Product { get; private set; }
+
     public int OnHand { get; private set; }
     public int Reserved { get; private set; }
 

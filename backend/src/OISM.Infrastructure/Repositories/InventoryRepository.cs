@@ -22,11 +22,12 @@ public class InventoryRepository : IInventoryRepository
         Guid productId,
         CancellationToken ct = default)
     {
-        return _db.Inventories.FirstOrDefaultAsync(
-            x => x.TenantId == tenantId
-              && x.BranchId == branchId
-              && x.ProductId == productId,
-            ct);
+        return _db.Inventories
+            .FirstOrDefaultAsync(
+                x => x.TenantId == tenantId
+                  && x.BranchId == branchId
+                  && x.ProductId == productId,
+                ct);
     }
 
     // Lấy tồn kho và khóa bản ghi khi điều chỉnh
@@ -46,13 +47,14 @@ public class InventoryRepository : IInventoryRepository
             .FirstOrDefaultAsync(ct);
     }
 
-    // Lấy toàn bộ tồn kho theo chi nhánh
+    // Lấy tồn kho kèm thông tin sản phẩm
     public async Task<List<Inventory>> GetAllByBranchAsync(
         Guid tenantId,
         Guid branchId,
         CancellationToken ct = default)
     {
         return await _db.Inventories
+            .Include(x => x.Product)
             .Where(x => x.TenantId == tenantId
                      && x.BranchId == branchId)
             .ToListAsync(ct);

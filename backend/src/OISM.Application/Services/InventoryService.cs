@@ -43,7 +43,7 @@ public class InventoryService : IInventoryService
         };
     }
 
-    // Lấy toàn bộ tồn kho theo chi nhánh
+    // Lấy tồn kho kèm tên và SKU sản phẩm
     public async Task<List<InventoryListResponse>> GetAllInventoryAsync(
         Guid tenantId,
         Guid branchId,
@@ -55,6 +55,8 @@ public class InventoryService : IInventoryService
         return inventories.Select(x => new InventoryListResponse
         {
             ProductId = x.ProductId,
+            Sku = x.Product?.Sku ?? string.Empty,
+            Name = x.Product?.Name ?? string.Empty,
             OnHand = x.OnHand,
             Reserved = x.Reserved
         }).ToList();

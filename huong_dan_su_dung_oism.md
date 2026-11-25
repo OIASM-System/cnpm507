@@ -21,16 +21,25 @@ phẩm khi thao tác trên giao diện quản lý tồn kho OISM.
 
   SKU      Tên sản phẩm     ProductID
   -------- ---------------- ----------------------------------------
-  SP001    Coca             `25d00b0f-a91f-4542-a375-7a1a57cf70ea`
-  SP002    7Up              `91e8ce07-6905-4810-a375-284e713ee32d`
-  SP003    Sprite           `aacf2496-10e3-4530-9e81-e59d8581a8fa`
-  SP004    Pepsi            `79925918-d51f-4393-a13f-eb01469de138`
-  SP005    Khô gà           `19616768-bd39-486d-8fa7-64d46b014a61`
-  SP006    Khô bò           `a0dd60f0-cc0d-46dd-854c-16eefcf32771`
-  SP007    Lạp xưởng        `38909253-2cfc-4946-8969-d3c48bf424d8`
-  SP008    Xúc xích         `ea0cdaae-a9a0-4677-b482-3882cdd939f7`
-  SP009    Hảo Hảo          `03d3d905-680c-4dfd-a12f-0c5b219a5956`
-  SP010    Omachi           `f89d0fb8-569b-4c22-a2bc-c6afedaea2b3`
+SP001 - Coca: 25d00b0f-a91f-4542-a375-7a1a57cf70ea
+
+SP002 - 7Up: 91e8ce07-6905-4810-a375-284e713ee32d
+
+SP003 - Sprite: aacf2496-10e3-4530-9e81-e59d8581a8fa
+
+SP004 - Pepsi: 79925918-d51f-4393-a13f-eb01469de138
+
+SP005 - Khô gà: 19616768-bd39-486d-8fa7-64d46b014a61
+
+SP006 - Khô bò: a0dd60f0-cc0d-46dd-854c-16eefcf32771
+
+SP007 - Lạp xưởng: 38909253-2cfc-4946-8969-d3c48bf424d8
+
+SP008 - Xúc xích: ea0cdaae-a9a0-4677-b482-3882cdd939f7
+
+SP009 - Hảo Hảo: 03d3d905-680c-4dfd-a12f-0c5b219a5956
+
+SP010 - Omachi: f89d0fb8-569b-4c22-a2bc-c6afedaea2b3
 
 ## 3. Hướng dẫn sử dụng giao diện tồn kho
 

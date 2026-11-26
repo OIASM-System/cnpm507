@@ -25,7 +25,6 @@ OISM (Omnichannel Inventory and Sales Management System) là hệ thống quản
 | 15 | [backend](./backend/) | Xây dựng API, xử lý nghiệp vụ và kết nối cơ sở dữ liệu | 🟢 Hoàn thành |
 | 16 | [frontend](./frontend/) | Phát triển giao diện người dùng và tích hợp với Backend | 🟢 Hoàn thành |
 | 17 | [assets](./assets/) | Lưu trữ hình ảnh, tài nguyên và các dữ liệu hỗ trợ dự án | 🟢 Hoàn thành |
-
 ## 3. Chú thích trạng thái
 
 - 🟢 **Hoàn thành (Completed):** Công việc đã hoàn tất.

@@ -2,7 +2,7 @@
 
 ## 1. Giới thiệu
 
-OISM (Omnichannel Inventory and Sales Management System) là hệ thống quản lý bán hàng và tồn kho đa kênh, hỗ trợ quản lý sản phẩm, đơn hàng, kho hàng và ứng dụng AI trong đề xuất nhập hàng.
+OISM (Omnichannel Inventory and Sales Management System) là hệ thống quản lý bán hàng và tồn kho đa kênh, hỗ trợ quản lý sản phẩm, đơn hàng, kho hàng trong đề xuất nhập hàng.
 
 ## 2. Cấu trúc dự án và tiến độ hoàn thành
 

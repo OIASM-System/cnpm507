@@ -1,7 +1,6 @@
 # 👥 Team Skill Assignment (Phân công nhiệm vụ & Năng lực) - OISM System
 
-Tài liệu này xác định rõ vai trò, thế mạnh, danh sách đầu việc thực tế trên Jira (`SCRUM-25` – `SCRUM-99`) và sự phân công phụ trách các phân môn/thư mục kỹ thuật trong dự án **OISM (Omnichannel Inventory and Sales Management System)** cho **6 thành viên** trong nhóm, đảm bảo phối hợp hiệu quả theo mô hình Agile Scrum.
-
+Tài liệu này xác định rõ vai trò, thế mạnh, danh sách đầu việc thực tế trên Jira (`SCRUM-25` – `SCRUM-99`) và sự phân công phụ trách các phân môn/thư mục kỹ thuật trong dự án **OISM (Omnichannel Inventory and Sales Management System)** cho **6 thành viên** trong nhóm.
 ---
 
 ## 🎯 Phân chia Vai trò & Trách nhiệm chính (Core Roles)

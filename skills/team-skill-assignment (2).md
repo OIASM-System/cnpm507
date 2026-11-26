@@ -49,7 +49,7 @@ Tài liệu này xác định rõ vai trò, thế mạnh, danh sách đầu vi�
   * Lập trình giao diện Quản lý Danh mục & Sản phẩm/SKU (`SCRUM-82`), Lập Phiếu nhập hàng (`SCRUM-83`) và Trung tâm Quản lý Đơn hàng tập trung (`SCRUM-88`).
   * Soạn thảo bộ dữ liệu mẫu thực tế (`SCRUM-95`) và viết cuốn Tài liệu Hướng dẫn sử dụng User Manual (`SCRUM-96`).
 
-### 5. Cường Hoàng Phúc — Database Architect, Security Backend & Webhook Simulator Engineer
+### 5. Hoàng Phúc Cường — Database Architect, Security Backend & Webhook Simulator Engineer
 * **Thế mạnh:** Thiết kế cơ sở dữ liệu PostgreSQL, bảo mật xác thực đa thuê bao và phát triển công cụ giả lập tích hợp sàn TMĐT.
 * **Các thư mục/phân môn phụ trách chính:**
   * `07-database-design/` (Sơ đồ ERD, Data Dictionary, chiến lược đánh chỉ mục và cô lập dữ liệu Tenant).

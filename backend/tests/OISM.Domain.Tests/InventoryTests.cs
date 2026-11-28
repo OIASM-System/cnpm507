@@ -1,3 +1,4 @@
+
 using Xunit;
 using OISM.Domain.Entities;
 
@@ -23,6 +24,27 @@ public class InventoryTests
     {
         Assert.Throws<ArgumentException>(() =>
             new Inventory(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), -1));
+    }
+
+    [Fact]
+    public void Constructor_WithEmptyTenantId_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new Inventory(Guid.Empty, Guid.NewGuid(), Guid.NewGuid(), 10));
+    }
+
+    [Fact]
+    public void Constructor_WithEmptyBranchId_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new Inventory(Guid.NewGuid(), Guid.Empty, Guid.NewGuid(), 10));
+    }
+
+    [Fact]
+    public void Constructor_WithEmptyProductId_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new Inventory(Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, 10));
     }
 
     [Fact]
@@ -70,6 +92,42 @@ public class InventoryTests
     }
 
     [Fact]
+    public void ConfirmReservation_WithZeroQuantity_ThrowsInvalidOperationException()
+    {
+        var inventory = CreateInventory(10);
+        inventory.Reserve(3);
+
+        Assert.Throws<InvalidOperationException>(
+            () => inventory.ConfirmReservation(0));
+
+        Assert.Equal(10, inventory.OnHand);
+        Assert.Equal(3, inventory.Reserved);
+    }
+
+    [Fact]
+    public void ConfirmReservation_WithQuantityGreaterThanReserved_ThrowsInvalidOperationException()
+    {
+        var inventory = CreateInventory(10);
+        inventory.Reserve(3);
+
+        Assert.Throws<InvalidOperationException>(
+            () => inventory.ConfirmReservation(4));
+
+        Assert.Equal(10, inventory.OnHand);
+        Assert.Equal(3, inventory.Reserved);
+    }
+
+    [Fact]
+    public void ConfirmReservation_WithNegativeQuantity_ThrowsInvalidOperationException()
+    {
+        var inventory = CreateInventory(10);
+        inventory.Reserve(3);
+
+        Assert.Throws<InvalidOperationException>(
+            () => inventory.ConfirmReservation(-1));
+    }
+
+    [Fact]
     public void ReleaseReservation_ReducesReservedButKeepsOnHand()
     {
         var inventory = CreateInventory(10);
@@ -83,12 +141,47 @@ public class InventoryTests
     }
 
     [Fact]
+    public void ReleaseReservation_WithZeroQuantity_ThrowsInvalidOperationException()
+    {
+        var inventory = CreateInventory(10);
+        inventory.Reserve(3);
+
+        Assert.Throws<InvalidOperationException>(
+            () => inventory.ReleaseReservation(0));
+
+        Assert.Equal(3, inventory.Reserved);
+    }
+
+    [Fact]
+    public void ReleaseReservation_WithQuantityGreaterThanReserved_ThrowsInvalidOperationException()
+    {
+        var inventory = CreateInventory(10);
+        inventory.Reserve(3);
+
+        Assert.Throws<InvalidOperationException>(
+            () => inventory.ReleaseReservation(4));
+
+        Assert.Equal(3, inventory.Reserved);
+    }
+
+    [Fact]
+    public void ReleaseReservation_WithNegativeQuantity_ThrowsInvalidOperationException()
+    {
+        var inventory = CreateInventory(10);
+        inventory.Reserve(3);
+
+        Assert.Throws<InvalidOperationException>(
+            () => inventory.ReleaseReservation(-1));
+    }
+
+    [Fact]
     public void AdjustStock_BelowReservedQuantity_ThrowsInvalidOperationException()
     {
         var inventory = CreateInventory(10);
         inventory.Reserve(5);
 
         Assert.Throws<InvalidOperationException>(() => inventory.AdjustStock(4));
+
         Assert.Equal(10, inventory.OnHand);
         Assert.Equal(5, inventory.Reserved);
     }
@@ -102,5 +195,28 @@ public class InventoryTests
 
         Assert.Equal(15, inventory.OnHand);
         Assert.Equal(15, inventory.Available);
+    }
+
+    [Fact]
+    public void AdjustStock_WithNegativeQuantity_ThrowsInvalidOperationException()
+    {
+        var inventory = CreateInventory(10);
+
+        Assert.Throws<InvalidOperationException>(
+            () => inventory.AdjustStock(-1));
+
+        Assert.Equal(10, inventory.OnHand);
+    }
+
+    [Fact]
+    public void AdjustStock_ToZero_WhenNothingIsReserved_Succeeds()
+    {
+        var inventory = CreateInventory(10);
+
+        inventory.AdjustStock(0);
+
+        Assert.Equal(0, inventory.OnHand);
+        Assert.Equal(0, inventory.Reserved);
+        Assert.Equal(0, inventory.Available);
     }
 }

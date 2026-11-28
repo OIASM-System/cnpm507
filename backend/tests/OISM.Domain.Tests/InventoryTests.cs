@@ -1,3 +1,4 @@
+using Xunit;
 using OISM.Domain.Entities;
 
 namespace OISM.Domain.Tests;

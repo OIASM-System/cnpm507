@@ -27,10 +27,25 @@ public class OrderItem
             throw new ArgumentException("ProductId không hợp lệ.");
 
         if (quantity <= 0)
-            throw new ArgumentException("Số lượng phải lớn hơn 0.");
+            throw new ArgumentException("Số lượng phải lớn hơn 0.", nameof(quantity));
 
         if (unitPrice < 0)
-            throw new ArgumentException("Đơn giá không hợp lệ.");
+            throw new ArgumentException("Đơn giá không hợp lệ.", nameof(unitPrice));
+
+        if (string.IsNullOrWhiteSpace(sku))
+            throw new ArgumentException("SKU không được để trống.", nameof(sku));
+
+        if (string.IsNullOrWhiteSpace(productName))
+            throw new ArgumentException("Tên sản phẩm không được để trống.", nameof(productName));
+
+        sku = sku.Trim();
+        productName = productName.Trim();
+
+        if (sku.Length > 100)
+            throw new ArgumentException("SKU không được vượt quá 100 ký tự.", nameof(sku));
+
+        if (productName.Length > 250)
+            throw new ArgumentException("Tên sản phẩm không được vượt quá 250 ký tự.", nameof(productName));
 
         Id = Guid.NewGuid();
         ProductId = productId;

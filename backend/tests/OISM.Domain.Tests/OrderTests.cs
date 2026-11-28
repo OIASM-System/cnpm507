@@ -1,3 +1,4 @@
+using Xunit;
 using OISM.Domain.Entities;
 using OISM.Domain.Enums;
 
@@ -90,4 +91,24 @@ public class OrderTests
 
         Assert.Throws<InvalidOperationException>(() => order.Cancel());
     }
+
+    [Fact]
+    public void Constructor_WithSourceLongerThanDatabaseLimit_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new Order(Guid.NewGuid(), Guid.NewGuid(), new string('S', 41)));
+    }
+
+    [Fact]
+    public void AddItem_WhenTotalWouldOverflow_DoesNotAddItem()
+    {
+        var order = new Order(Guid.NewGuid(), Guid.NewGuid(), "POS");
+        var largeItem = new OrderItem(Guid.NewGuid(), "SKU-01", "Large item", int.MaxValue, decimal.MaxValue / int.MaxValue);
+        order.AddItem(largeItem);
+        var overflowingItem = new OrderItem(Guid.NewGuid(), "SKU-02", "Overflow item", 1, decimal.MaxValue);
+
+        Assert.Throws<OverflowException>(() => order.AddItem(overflowingItem));
+        Assert.Single(order.Items);
+    }
+
 }

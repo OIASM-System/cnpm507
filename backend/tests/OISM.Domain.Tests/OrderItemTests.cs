@@ -1,3 +1,4 @@
+using Xunit;
 using OISM.Domain.Entities;
 
 namespace OISM.Domain.Tests;
@@ -34,4 +35,48 @@ public class OrderItemTests
         Assert.Throws<ArgumentException>(() =>
             new OrderItem(Guid.NewGuid(), "SKU-01", "Product", 1, -1m));
     }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Constructor_WithBlankSku_ThrowsArgumentException(string? sku)
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new OrderItem(Guid.NewGuid(), sku!, "Product", 1, 100m));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Constructor_WithBlankProductName_ThrowsArgumentException(string? name)
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new OrderItem(Guid.NewGuid(), "SKU-01", name!, 1, 100m));
+    }
+
+    [Fact]
+    public void Constructor_TrimsSkuAndProductName()
+    {
+        var item = new OrderItem(Guid.NewGuid(), " SKU-01 ", " Product ", 1, 100m);
+
+        Assert.Equal("SKU-01", item.Sku);
+        Assert.Equal("Product", item.ProductName);
+    }
+
+    [Fact]
+    public void Constructor_WithSkuLongerThanDatabaseLimit_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new OrderItem(Guid.NewGuid(), new string('S', 101), "Product", 1, 100m));
+    }
+
+    [Fact]
+    public void Constructor_WithProductNameLongerThanDatabaseLimit_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new OrderItem(Guid.NewGuid(), "SKU-01", new string('A', 251), 1, 100m));
+    }
+
 }

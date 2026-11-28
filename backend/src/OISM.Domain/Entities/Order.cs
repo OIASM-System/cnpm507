@@ -20,7 +20,13 @@ public class Order
     {
         if (tenantId == Guid.Empty) throw new ArgumentException("TenantId không hợp lệ.");
         if (branchId == Guid.Empty) throw new ArgumentException("BranchId không hợp lệ.");
-        if (string.IsNullOrWhiteSpace(source)) throw new ArgumentException("Source không được để trống.");
+        if (string.IsNullOrWhiteSpace(source))
+            throw new ArgumentException("Source không được để trống.", nameof(source));
+
+        source = source.Trim();
+        if (source.Length > 40)
+            throw new ArgumentException("Source không được vượt quá 40 ký tự.", nameof(source));
+
         Id = Guid.NewGuid();
         TenantId = tenantId;
         BranchId = branchId;
@@ -34,8 +40,10 @@ public class Order
     {
         ArgumentNullException.ThrowIfNull(item);
         if (Status != OrderStatus.Pending) throw new InvalidOperationException("Không thể sửa đơn ở trạng thái hiện tại.");
+        // Calculate first so an overflow cannot leave the item collection partially updated.
+        var updatedTotal = checked(TotalAmount + item.LineTotal);
         Items.Add(item);
-        TotalAmount += item.LineTotal;
+        TotalAmount = updatedTotal;
     }
 
     public void Confirm()
